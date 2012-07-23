@@ -1,0 +1,26 @@
+<body class='sessions'>
+<div class='sessions' id="container">
+    
+  
+
+<h2>Авторизация пользователя</h2>
+
+
+<%= form_tag sessions_path, :class=>'sessions' do %>
+  <div class="field">
+    <%= label_tag :email, "Введите email пользователя" %>
+    <%= text_field_tag :email, params[:email] %>
+  </div>
+  <div class="field">
+    <%= label_tag :password, "Пароль" %>
+    <%= password_field_tag :password %>
+  </div>
+  <div class="actions"><%= submit_tag "Вход" %></div>
+<% end %>
+
+<% flash.each do |name, msg| %>      
+      <p class="msg error"><%= msg %></p>
+    <% end %>
+
+</div>
+</body>

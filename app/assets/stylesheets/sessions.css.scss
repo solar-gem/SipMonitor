@@ -1,0 +1,31 @@
+// Place all the styles related to the sessions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+body.sessions {
+  background-color: #4B7399;
+  //font-family: Verdana, Helvetica, Arial;
+  //font-size: 14px;
+
+  font:0.8em/1.5 "arial", sans-serif;
+}
+
+#container.sessions {
+  width: 75%;
+  margin: 0 auto;
+  background-color: #FFF;
+  padding: 20px 40px;
+  border: solid 1px black;
+  margin-top: 20px;
+}
+
+form.sessions label {
+  display: block;
+  margin-bottom: 2px;
+}
+
+form.sessions .field, form.sessions .actions {
+  margin: 12px 0;
+}
+
+
