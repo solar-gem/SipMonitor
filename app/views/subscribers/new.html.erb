@@ -1,0 +1,36 @@
+<h3 class="tit">Добавление нового абонента</h3>
+<fieldset>
+
+<%= form_for @subscriber do |f| %>
+  <% if @subscriber.errors.any? %>
+    <div class="error_messages">
+      <h2>Form is invalid</h2>
+      <ul>
+        <% for message in @subscriber.errors.full_messages %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="field">
+    <%= f.label :number, "Номер абонента (10 знаков)" %>
+    <%= f.telephone_field :number %>
+  </div>
+  <div class="field">
+    <%= f.label :name, "Принадлежность" %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :address, "Адрес" %>
+    <%= f.text_field :address %>
+  </div>
+  <div class="field">
+    <%= f.label :control, "Поставить под контроль?" %>
+    <%= f.check_box :control %>
+  </div>
+
+  
+  <div class="actions"><%= f.submit %></div>
+<% end %>
+
+</fieldset>
