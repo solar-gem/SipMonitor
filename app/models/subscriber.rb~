@@ -1,4 +1,4 @@
 class Subscriber < ActiveRecord::Base
-  has_many :alarm
+  has_many :subscriber
   attr_accessible :address, :control, :name, :number
 end

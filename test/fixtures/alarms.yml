@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  alarm_raised_time: 2012-07-24 11:44:35
+  cleared_time: 2012-07-24 11:44:35
+  data: MyText
+  subscriber: 
+
+two:
+  alarm_raised_time: 2012-07-24 11:44:35
+  cleared_time: 2012-07-24 11:44:35
+  data: MyText
+  subscriber: 

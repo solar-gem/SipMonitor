@@ -1,0 +1,12 @@
++++    NNov-SoftX        2012-07-23 11:18:54+04:00
+ALARM  1086720     Fault  Warning     Exchange  4251    Software        
+     Sync serial No.  =  2170581   
+          Alarm name  =  Terminal offline
+   Alarm raised time  =  2012-07-23 11:18:53+04:00
+       Location info  =  ProtocolType=SIP, EID=4354604
+          Auto Clear  =  true                  
+          Module No.  =  26 
+         Alarm cause  =  Terminal registration expired because terminal was 
+                         offline or network has problem.
+      Repair actions  =  No Proposal Available
+---    END

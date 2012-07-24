@@ -1,0 +1,10 @@
+<!-- Definition List -->
+<h3 class="tit">Общая статистика</h3>
+<dl>
+		<dt>Абонентов прописано</dt>
+		<dd><%= Subscriber.all.length %></dd>
+		<dt>Абонентов мониторится</dt>
+		<dd><%= Subscriber.where(:control => true).length %></dd>
+		<dt>Абонентов зарегестрировано</dt>
+		<dd>Lorem ipsum dolor sit amet.</dd>
+</dl>

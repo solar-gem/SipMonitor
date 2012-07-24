@@ -1,0 +1,34 @@
+<!-- Definition List -->
+<h3 class="tit">Общая статистика</h3>
+<dl>
+		<dt>Абонентов прописано</dt>
+		<dd><%= Subscriber.all.length %></dd>
+		<dt>Абонентов мониторится</dt>
+		<dd><%= Subscriber.where(:control => true).length %></dd>
+		<dt>Абонентов зарегестрировано</dt>
+		<dd>Lorem ipsum dolor sit amet.</dd>
+</dl>
+
+
+
+<h3 class="tit">Активные аварии Index</h3> 
+<table>
+  <tr>
+    <th>Номер абонента</th>
+    <th>Время начала аварии</th>
+    <th>Время завершения аварии</th>
+    <th>Просмотр</th>
+  </tr>
+ 
+  <% @alarms.each do |alarm| %>
+     <tr <%= raw "class=\"rg\"" unless alarm.cleared_time %> >
+      <td><%= Subscriber.find(alarm.subscriber_id).number %></td>
+      <td><%= alarm.alarm_raised_time %></td>
+      <td><%= alarm.cleared_time %></td>      	
+    </tr>
+  <% end %>
+</table>
+
+
+
+

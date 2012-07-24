@@ -1,0 +1,24 @@
+<h3 class="tit">Просмотр всех абонентов в БД</h3>
+ 
+<table>
+  <tr>
+    <th>Номер</th>
+    <th>Принадлежность</th>
+    <th>Адрес</th>
+    <th>Сканирование</th>
+  </tr>
+ <% i = 0 %>
+  <% @subscribers.each do |subscriber| %>
+    <% i += 1 %>
+    <tr <%= raw "class=\"bg\"" if (i % 2).zero? %> >
+      <td><%= subscriber.number %></td>
+      <td><%= subscriber.name %></td>
+      <td><%= subscriber.address %></td>
+      <td><%= check_box_tag("", "", subscriber.control, :disabled => "true") %></td>	
+    </tr>
+  <% end %>
+</table>
+
+
+
+

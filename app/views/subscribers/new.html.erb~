@@ -1,6 +1,7 @@
-<h3 class="tit">Добавление нового абонента</h3>
+<h3 class="tit">Добавление нового абонента для постановки под наблюдение</h3>
 <fieldset>
-
+<legend>Данные абонента</legend>
+<table class="nostyle">
 <%= form_for @subscriber do |f| %>
   <% if @subscriber.errors.any? %>
     <div class="error_messages">
@@ -12,25 +13,28 @@
       </ul>
     </div>
   <% end %>
-  <div class="field">
-    <%= f.label :number %>
-    <%= f.telephone_field :number %>
-  </div>
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-  <div class="field">
-    <%= f.label :address %>
-    <%= f.text_field :address %>
-  </div>
-  <div class="field">
-    <%= f.label :control %>
-    <%= f.check_box :control %>
-  </div>
 
-  
-  <div class="actions"><%= f.submit %></div>
+<tr>
+	<td style="width:70px;">Номер абонента</td>
+	<td><%= f.telephone_field(:number, {:placeholder=>"Формат 10 знаков", :maxlength=>"10", :size=>"40", :class=>"input-text"}) %></td>
+</tr>
+<tr>
+	<td style="width:70px;">Принадлежность</td>
+	<td><%= f.text_field :name, {:placeholder=>"Название организации", :maxlength=>"20", :size=>"40", :class=>"input-text"} %></td>
+</tr>
+<tr>
+	<td style="width:70px;">Адрес</td>
+	<td><%= f.text_field :address, {:maxlength=>"30", :size=>"40", :class=>"input-text"} %></td>
+</tr>
+	<td></td>
+	<td><label><%= f.check_box :control %>Поставить под контроль?</label> &nbsp;</td>
+<tr>
+<tr>
+	<td colspan="2" class="t-right"><input type="submit" class="input-submit" value="Добавить" /></td>
+</tr>
+
+
+
 <% end %>
-
+</table>
 </fieldset>

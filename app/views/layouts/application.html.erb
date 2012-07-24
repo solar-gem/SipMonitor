@@ -67,7 +67,9 @@
 
       </p>
 
-      <p class="f-right">Пользователь: <strong><a href="#"><%= current_user.email if current_user %></a></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong><a href="#" id="logout">Выход</a></strong></p>
+      <p class="f-right">Пользователь: <strong><a href="#"><%= current_user.email %></a></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong><%= link_to("Выход", "/sessions/#{current_user.id}", :method => :delete, :confirm => "Вы уверены, что хотите выйти?") %></strong></p>
+
+
 
     </div> <!--  /tray -->
 
@@ -82,11 +84,13 @@
       -->
 
       <ul class="box">		
-        <li id="menu-active"><a href="#"><span>Аварийная панель</span></a></li> <!-- Active -->
-        <li><%= link_to(:controller => "subscribers") do %><span>База данных</span><% end %></li>
+        <li id="menu-active"><%= link_to(:controller => "alarms") do %><span>Аварийная панель</span><% end %></li> <!-- Active -->
 
 
-        <li><a href="#"><span>Статистика</span></a></li>
+        <li><%= link_to(:controller => "subscribers", :action => "index") do %><span>База данных</span><% end %></li>
+
+
+        <li><a href="/alarms/statistics"><span>Статистика</span></a></li>
         <li><a href="#"><span>Пользователи</span></a></li>	
         <li class="f-right"><%= audio_tag "Critical.wav", :controls => true, :autobuffer => true, :autoplay => true, :loop => true %></li>
       </ul>
@@ -121,7 +125,7 @@
             </form>
 
             <!-- Create a new project -->
-            <p id="btn-create" class="box"><a href="#"><span>Добавить абонента</span></a></p>
+            <p id="btn-create" class="box"><%= link_to(:controller => "subscribers", :action => "new") do %><span>Добавить абонента</span><% end %></p>
 
           </div> <!-- /padding -->
 

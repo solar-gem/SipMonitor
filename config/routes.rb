@@ -1,17 +1,21 @@
 SipMonitor::Application.routes.draw do
-  
+
   resources :subscribers
   get "dashboard/index"
-
+  resources :alarms do
+    collection do
+      get 'statistics'
+    end
+  end
 
   get "login" => "sessions#new", :as => "login"
-  
+
   root :to => "sessions#new"
-  
+
   resources :users
   resources :sessions
 
-
+  
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
