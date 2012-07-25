@@ -4,7 +4,7 @@ class SubscribersController < ApplicationController
 
   end  
 
-def new
+  def new
     @subscriber = Subscriber.new
   end
 

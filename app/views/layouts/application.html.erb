@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>SipMonitor</title>
-  <!--<%= stylesheet_link_tag    "application", :media => "all" %> -->
-
-  
-
-  <%= stylesheet_link_tag "dashboard/1col.css", :rel=>"alternate stylesheet", :media => "screen,projection", :title=>"1col" %>
-  <%= stylesheet_link_tag "dashboard/2col.css", :media => "screen,projection", :title=>"2col" %>
-   <%= stylesheet_link_tag "dashboard/main", "dashboard/reset", "dashboard/style", "dashboard/mystyle", :media => "screen,projection" %>
-<%= stylesheet_link_tag "sessions", :media => "all" %>
-  <!--[if lte IE 6]>
-  <%=stylesheet_link_tag "dashboard/main-ie6", :media => "screen,projection" %>
-  <![endif]-->
-
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
+  <head>
+    <title>SipMonitor</title>
+    <!--<%= stylesheet_link_tag    "application", :media => "all" %> -->
 
 
-  <script type="text/javascript">
-	$(document).ready(function(){
-		$(".tabs > ul").tabs();
-	});
-	</script>
-	<title>Adminizio Lite</title>
+
+    <%= stylesheet_link_tag "dashboard/1col.css", :rel=>"alternate stylesheet", :media => "screen,projection", :title=>"1col" %>
+    <%= stylesheet_link_tag "dashboard/2col.css", :media => "screen,projection", :title=>"2col" %>
+    <%= stylesheet_link_tag "dashboard/main", "dashboard/reset", "dashboard/style", "dashboard/mystyle", :media => "screen,projection" %>
+    <%= stylesheet_link_tag "sessions", :media => "all" %>
+    <!--[if lte IE 6]>
+    <%=stylesheet_link_tag "dashboard/main-ie6", :media => "screen,projection" %>
+    <![endif]-->
+
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tags %>
+
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+          $(".tabs > ul").tabs();
+          });
+</script>
+<title>Adminizio Lite</title>
 
 </head>
 
 
 
-  
+
 
 
 
@@ -92,7 +92,7 @@
 
         <li><a href="/alarms/statistics"><span>Статистика</span></a></li>
         <li><a href="#"><span>Пользователи</span></a></li>	
-        <li class="f-right"><%= audio_tag "Critical.wav", :controls => true, :autobuffer => true, :autoplay => true, :loop => true %></li>
+        <li class="f-right"><%= audio_tag "Critical.wav", :controls => true, :autobuffer => true, :autoplay => false, :loop => true %></li>
       </ul>
 
     </div> <!-- /header -->
@@ -142,10 +142,10 @@
 
 
 
-         
 
 
-<%= yield %>
+
+          <%= yield %>
 
 
 

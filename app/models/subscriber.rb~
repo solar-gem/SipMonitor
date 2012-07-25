@@ -1,4 +1,10 @@
+# coding: utf-8
+require 'connection_to_commutation_system_telnet'
+
 class Subscriber < ActiveRecord::Base
-  has_many :subscriber
+
+  has_many :alarm
   attr_accessible :address, :control, :name, :number
+
+  validates :number, {:length => { :is => 10 }}
 end

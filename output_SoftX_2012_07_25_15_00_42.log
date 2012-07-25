@@ -1,0 +1,67 @@
+Trying 10.200.16.8...
+Connected to 10.200.16.8.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Welcome to SoftX3000 Operation and Maintenance Center
+Version : SoftX3000 V300R010
+Copyright(c) HuaWei. All Rights Reserved
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
++++    NNov-SoftX        2012-07-25 15:00:47+04:00
+O&M    #727879
+%%LGI:OP="opts270", PWD="*****";%%
+RETCODE = 0  Operation succeeded
+
+opts270 logged in successfully
+---    END
+
++++    NNov-SoftX        2012-07-25 15:00:48+04:00
+O&M    #727880
+%%LST SBR: D=K'4354604, LP=0;%%
+RETCODE = 0  Operation succeeded
+
+User Physical Location
+----------------------
+                Equipment ID  =  4354604
+Master/Slave softswitch flag  =  Master
+
+(Number of results = 1)
+
+MSBR user description
+---------------------
+                             Local DN set  =  0
+                        Subscriber number  =  4354604
+                       FCCU module number  =  26
+                         Equipment number  =  230
+                                Port type  =  SIP subscriber
+                     Centrex group number  =  NULL
+                        Centrex sub group  =  NULL
+                     Centrex short number  =  NULL
+                             Number state  =  Normal
+                          Subscriber type  =  Ordinary
+                        Subscriber status  =  Normal
+                        Additional status  =  Ordinary
+                         Call source code  =  0
+                         PBX group number  =  No
+                   Custom subscriber type  =  NULL
+          If allow PIN contrl new service  =  Allowed
+                            CallWatchFlag  =  False
+                         iCallObserveFlag  =  No watch
+                       Audio codec prefer  =  No prefer
+                       Video codec prefer  =  No prefer
+                    Preselect policy code  =  65535
+ If allow newservice local control by pin  =  Collect call screening
+                                           =  Password call barring
+                                           =  Number barring
+If allow newservice remote control by pin  =  NULL
+                                Vms index  =  NULL
+                   Overload priorty level  =  0
+                             Equipment ID  =  4354604
+             Master/Slave softswitch flag  =  Master
+                                NP number  =  NULL
+
+(Number of results = 1)
+
+---    END

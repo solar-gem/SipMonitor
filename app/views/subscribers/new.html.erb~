@@ -1,11 +1,13 @@
 <h3 class="tit">Добавление нового абонента для постановки под наблюдение</h3>
 <fieldset>
-<legend>Данные абонента</legend>
+
 <table class="nostyle">
 <%= form_for @subscriber do |f| %>
   <% if @subscriber.errors.any? %>
     <div class="error_messages">
-      <h2>Form is invalid</h2>
+
+     <p class="msg error">Ошибка в данных</p>
+      
       <ul>
         <% for message in @subscriber.errors.full_messages %>
           <li><%= message %></li>
@@ -20,11 +22,11 @@
 </tr>
 <tr>
 	<td style="width:70px;">Принадлежность</td>
-	<td><%= f.text_field :name, {:placeholder=>"Название организации", :maxlength=>"20", :size=>"40", :class=>"input-text"} %></td>
+	<td><%= f.text_field :name, {:placeholder=>"Название организации", :maxlength=>"30", :size=>"40", :class=>"input-text"} %></td>
 </tr>
 <tr>
 	<td style="width:70px;">Адрес</td>
-	<td><%= f.text_field :address, {:maxlength=>"30", :size=>"40", :class=>"input-text"} %></td>
+	<td><%= f.text_field :address, {:maxlength=>"40", :size=>"40", :class=>"input-text"} %></td>
 </tr>
 	<td></td>
 	<td><label><%= f.check_box :control %>Поставить под контроль?</label> &nbsp;</td>

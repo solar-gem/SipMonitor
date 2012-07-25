@@ -90,7 +90,7 @@
         <li><%= link_to(:controller => "subscribers", :action => "index") do %><span>База данных</span><% end %></li>
 
 
-        <li><a href="/alarm/statistics"><span>Статистика</span></a></li>
+        <li><a href="/alarms/statistics"><span>Статистика</span></a></li>
         <li><a href="#"><span>Пользователи</span></a></li>	
         <li class="f-right"><%= audio_tag "Critical.wav", :controls => true, :autobuffer => true, :autoplay => true, :loop => true %></li>
       </ul>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120724074435) do
+ActiveRecord::Schema.define(:version => 20120725093826) do
 
   create_table "alarms", :force => true do |t|
     t.datetime "alarm_raised_time"
@@ -31,6 +31,9 @@ ActiveRecord::Schema.define(:version => 20120724074435) do
     t.boolean  "control",                  :default => false
     t.datetime "created_at",                                  :null => false
     t.datetime "updated_at",                                  :null => false
+    t.string   "eid",        :limit => 32
+    t.string   "code"
+    t.string   "area"
   end
 
   create_table "users", :force => true do |t|
