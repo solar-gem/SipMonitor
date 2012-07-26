@@ -28,7 +28,7 @@ class Subscriber < ActiveRecord::Base
 
   # Запрашиваем Equipment ID со станции
   ###  validate :request_EID_from_station
-  if (validates(:number, {:length => { :in => 5..7 }}) && 
+  if (validates(:number, {:uniqueness => true, :length => { :in => 5..7 }}) && 
       validates(:area, {:length => { :in => 3..5 }}) &&
       validates_with(SumAreaNumberValidator)
      )

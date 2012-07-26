@@ -18,35 +18,19 @@ ActiveRecord::Base.establish_connection(:adapter => 'sqlite3',
 
 # Таблица аварий
 class Alarms < ActiveRecord::Base
+  belongs_to :subscriber
 end
-module Malicious_assistant
-  # Поиск номера 
-  def finding_number(text_alarm, eid_regexp = @options[:eid_regexp])
-    eid_regexp.each do |_eid_regexp|
-      return text_alarm[_eid_regexp][/\d+/] if text_alarm[_eid_regexp]
-    end
-    ""
-  end
 
-  # Поиск времени начала аварии
-  def finding_alarm_raised_time(text_alarm)
-    
-    time_str_source = text_alarm[@options[:alarm_raised_time_regexp]] 
-    time_str = time_str_source.sub(/Alarm raised time[=\s]/, '')
-    
-    # Время в аварийном сообщении
-    Time.parse(time_str)
-  end
-  
 
-  # Поиск времени в аварийном сообщении
-  def finding_alarm_time(text_alarm)
-    time_str = text_alarm[/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/] # Время в аварийном сообщении
-    Time.parse(time_str)
-  end
+class Subscribers < ActiveRecord::Base
+  has_many :alarm
 end
+
+class Scaners < ActiveRecord::Base
+end
+
+
 module Malicious_SoftX
-  include Malicious_assistant
 
   # подключении дополнительных параметров
   def add_malicious_options
@@ -74,39 +58,54 @@ class Malicious
     @ats.add_malicious_options
   end
 
-  # Отметка в БД о активности демона
-  def ats_actives
+  # Отметка в БД о активности 
+  def scan_activ
     begin
-      old_actives = Demons.where(:switching_system_id => @ats.options[:id], :server => SYSINFO.ipaddress_internal, :pid => Process.pid)
-
-      if old_actives.length == 0
-        Demons.new(:switching_system_id => @ats.options[:id],
-          :server => SYSINFO.ipaddress_internal,
-          :pid => Process.pid,
-          :alarm_data => @tmp_data).save
-      else
-        Demons.update(old_actives[0].id, :alarm_data => @tmp_data)
-      end
+      Scaners.update(1, last_time: Time.now)
     rescue => err
-      puts "#{@ats.options[:name]}  Ошибка обновления состояния подключения к станции => #{err.to_s}"
+      puts "Ошибка обновления состояния сканера => #{err.to_s}"
     end
 
   end
 
   # Взаимодействие с БД
-  def interaction_db(called, caller, alarm_time, id, alarm_data)
+  def interaction_db(data_alarm)
     begin # Запись в БД
-      tt = TrapMaliciousCalls.new(:called => called,
-        :caller=>caller,
-        :alarm_time=>alarm_time,
-        :ip_host_trap=>SYSINFO.ipaddress_internal,
-        :alarm_data=>alarm_data,
-        :switching_system_id=>id)
-      tt.save
+      subscriber_id = Subscribers.select(:id).where(eid: data_alarm[:eid]) # Запрос в БД данный номер стоит под наблюдением.
+      return "no control" if subscriber_id.length == 0
+      # Если есть признак восстановления аварии, то в БД ищем данный номер аварии и дополняем поле cleared_time.
+      if data_alarm[:cleared_time]
+        alarm_id = Alarms.select(:id).where(serial_number: data_alarm[:serial_number])
+        if alarm_id.length != 0
+          Alarms.update(alarm_id.first.id, cleared_time: data_alarm[:cleared_time])
+          return true
+        else
+          return "no search original alarm"
+        end
+      else # Если нет признака восстановления аварии, то создаем новую запись в БД аварий.
+        new_record = Alarms.new(alarm_raised_time: data_alarm[:alarm_raised_time],
+                               data: data_alarm[:data],
+                               subscriber_id: subscriber_id.first.id, # !!! Потенциальные ошибки
+                               serial_number: data_alarm[:serial_number])
+        new_record.save
+      end
+
+
+
+
+      #      tt = TrapMaliciousCalls.new(:called => called,
+#        :caller=>caller,
+#        :alarm_time=>alarm_time,
+#        :ip_host_trap=>SYSINFO.ipaddress_internal,
+#        :alarm_data=>alarm_data,
+#        :switching_system_id=>id)
+#      tt.save
     rescue ActiveRecord::RecordNotUnique
       "duplicate"
     rescue => err
       p err
+      puts $@
+
       puts "*" * 40
       puts err
       false
@@ -114,20 +113,19 @@ class Malicious
   end # begin
 
   # Вывод информации о хулиганском вызове пользователю
-  def notification(called, caller, alarm_time, save_db)
+  def notification(data_alarm,  save_db = nil)
     # Вывод данных о хулиганском вызове на терминал сервера
-    puts "#{@ats.options[:host].ljust(16)} A => #{caller.ljust(10)}   B => #{called.ljust(10)} TIME => #{alarm_time} DB => #{save_db}"
-    
+    puts "#{@ats.options[:host].ljust(16)} Номер => #{data_alarm[:eid].ljust(10)}  Авария => #{data_alarm[:serial_number].ljust(10)} Время аварии => #{data_alarm[:alarm_raised_time]}  Время востановления => #{data_alarm[:cleared_time]} DB => #{save_db}"
   end
-  
+
   # Отслеживание хулиганских вызовов
   def search
-    
+
     # Сканирование аварийных сообщений на предмет злонамеренных вызовов
     begin
       puts  "#{@ats.options[:name]} connecting to station ..." 
       @ats.connect
-   
+
       puts  "#{@ats.options[:name]}   connect => #{@ats.connect?}    login => absent  time => #{Time.now}" 
       
       @tmp_data = "Connect staton"
@@ -139,22 +137,26 @@ class Malicious
       loop do
         # Ожидание данных со станции. Для предотвращения зависания используем timeout
         timeout(@ats.options[:timeout_restart]){ @tmp_data = @ats.wait(@ats.options[:end_report_alarm])[:data] }
-
+        scan_activ # Сообщение в БД о времени активности сканера
         # Если аварийное сообщение имеет признак хулиганского вызова, то его анализируем
         @ats.options[:alarm_sip_regexp].each do |alarm_malicious_regexp|
 
           if @tmp_data =~ alarm_malicious_regexp   
-	    number = @ats.finding_number(@tmp_data)
-            print " #{number} =>  "
-            puts alarm_raised_time = @ats.finding_alarm_raised_time(@tmp_data)
+            #number = @ats.finding_number(@tmp_data)
+            #alarm_raised_time = @ats.finding_alarm_raised_time(@tmp_data)
+            #serial_number = @ats.finding_serial_number @tmp_data
+            #сleared_time = nil
             ###caller = @ats.finding_caller @tmp_data
             ###called = @ats.finding_called @tmp_data
             ###alarm_time = @ats.finding_alarm_time @tmp_data
             # Сохранение в базе данных
             ### rez_query = interaction_db(called, caller, alarm_time, @ats.options[:id], @tmp_data)
             # Вывод информации о хулиганском вызове пользователю
-            ###notification(called, caller, alarm_time,rez_query)
-
+            ####notification(called, caller, alarm_time,rez_query)
+            result = @ats.analysis_fault_warning_4251 @tmp_data
+            result_db = interaction_db result
+            notification(result, result_db)
+                                 
           end # if
         end # do
         ###ats_actives   # Фиксируем активность демона в БД
@@ -166,6 +168,7 @@ class Malicious
       retry
     rescue => err
       puts "#{@ats.options[:name]} #{err.to_s}  ERROR time => #{Time.now}"
+      puts $@
       @ats.close # При любой ошибке пробуем закрыть соединение со станцией
       puts "#{@ats.options[:name]} Closing time => #{Time.now}"
       sleep 1
@@ -191,6 +194,21 @@ ats =  ConnectionTelnet_SoftX_scan_alm.new(
         :port => 6001,
         :waittime => 0)
 
+  # Анализ аварии "Fault Warning Exchange 4251" - потеря регистрации SIP терминала
+  def ats.analysis_fault_warning_4251(text_alarm)
+    time_alarm = Time.parse(text_alarm[/(?<=NNov-SoftX        ).+/])
+    serial_number = text_alarm[/(?<=ALARM  )\d+/]
+    sync_serial_number = text_alarm[/(?<=Sync serial No.  =  )\d+/]
+    alarm_raised_time = Time.parse(text_alarm[/(?<=Alarm raised time  =  ).+/])
+    eid = text_alarm[/(?<=EID=)\d+/]
+    alarm_cause = text_alarm[/(?<=Alarm cause  =  ).+\n*.*(?=\n      Repair actions)/]
+    search_cleared_time_str = text_alarm[/(?<=Cleared time  =  ).+/]
+    cleared_time = Time.parse(search_cleared_time_str) if search_cleared_time_str
+    {data: text_alarm, time_alarm: time_alarm, serial_number: serial_number, 
+     sync_serial_number: sync_serial_number,
+     alarm_raised_time: alarm_raised_time, eid: eid, 
+     alarm_cause: alarm_cause, cleared_time: cleared_time ||= nil}
+  end
 
 
 scanner = Malicious.new(ats)

@@ -11,29 +11,36 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120725093826) do
+ActiveRecord::Schema.define(:version => 20120726072736) do
 
   create_table "alarms", :force => true do |t|
     t.datetime "alarm_raised_time"
     t.datetime "cleared_time"
     t.text     "data"
     t.integer  "subscriber_id"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.string   "serial_number",     :limit => 10
   end
 
   add_index "alarms", ["subscriber_id"], :name => "index_alarms_on_subscriber_id"
 
+  create_table "scaners", :force => true do |t|
+    t.boolean  "status"
+    t.datetime "last_time"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "subscribers", :force => true do |t|
-    t.string   "number",     :limit => 10,                    :null => false
+    t.string   "number",     :limit => 10
     t.string   "name"
     t.string   "address"
-    t.boolean  "control",                  :default => false
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
+    t.boolean  "control"
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "eid",        :limit => 32
-    t.string   "code"
-    t.string   "area"
+    t.string   "area",       :limit => 5
   end
 
   create_table "users", :force => true do |t|
