@@ -1,12 +1,12 @@
 # coding: utf-8
 class SessionsController < ApplicationController
-  
+
   def index
     render "new"
   end
-  
+
   def new
-    
+    redirect_to '/alarms' if current_user # Если пользователь ранее уже был зарегистрирован, то при переходе на станицу авторизации (корень сайта) его автоматически направляют на рабочую страницу
   end
 
   def create

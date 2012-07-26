@@ -87,7 +87,7 @@
         <li id="menu-active"><%= link_to(:controller => "alarms") do %><span>Аварийная панель</span><% end %></li> <!-- Active -->
 
 
-        <li><%= link_to(:controller => "subscribers", :action => "index") do %><span>База данных</span><% end %></li>
+        <li><%= link_to(:controller => "subscribers", :action => "index") do %><span>База данных абонентов</span><% end %></li>
 
 
         <li><a href="/alarms/statistics"><span>Статистика</span></a></li>
@@ -112,17 +112,55 @@
           <!-- <p><%= image_tag("SIP_NGN.png", :width=>'200px', :alt=>"SIP_NGN.png", :title=>"") %> </p> -->
 
           <!-- Search -->
-          <form action="#" method="get" id="search">
+
+          <%= form_tag(subscribers_path, :method => "get", :id=>"search") do %>
             <fieldset>
               <legend>Номер абонента</legend>
+              <p><%= telephone_field_tag('', nil, :class => 'input-text"', :size => 7, :placeholder=>"10 знаков", :maxlength => 10) %>&nbsp;<%= submit_tag("OK", :class => 'input-submit-02') %><br />
+              </fieldset>
+            <% end %> 
 
-              <p><input type="tel" maxlength="10" placeholder="10 знаков" size="17" name="" class="input-text" />&nbsp;<input type="submit" value="OK" class="input-submit-02" /><br />
 
+          
+          
+          
+          
+            <form action="#" method="get" id="search">
+              <fieldset>
+                <legend>Номер абонента</legend>
 
-
-
+                <input type="tel" maxlength="10" placeholder="10 знаков" size="17" name="" class="input-text" />&nbsp;<input type="submit" value="OK" class="input-submit-02" />
               </fieldset>
             </form>
+
+
+
+            <form action="#" method="get" id="search">
+              <fieldset>
+                <legend>Номер абонента</legend>
+                <p><input type="text" size="17" name="" class="input-text" />&nbsp;<input type="submit" value="OK" class="input-submit-02" /><br />
+                </p>
+              </fieldset>
+            </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             <!-- Create a new project -->
             <p id="btn-create" class="box"><%= link_to(:controller => "subscribers", :action => "new") do %><span>Добавить абонента</span><% end %></p>

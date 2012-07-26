@@ -14,7 +14,7 @@
       <td><%= subscriber.number %></td>
       <td><%= subscriber.name %></td>
       <td><%= subscriber.address %></td>
-      <td align="center"><%= check_box_tag("", "", subscriber.control, :disabled => "true") %></td>	
+      <td align="center"><%= subscriber.control == true ? 'есть' : 'нет' %></td>	
     </tr>
   <% end %>
 </table>
