@@ -11,16 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120726072736) do
+ActiveRecord::Schema.define(:version => 20120727034946) do
 
   create_table "alarms", :force => true do |t|
     t.datetime "alarm_raised_time"
     t.datetime "cleared_time"
     t.text     "data"
     t.integer  "subscriber_id"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.datetime "created_at",                                        :null => false
+    t.datetime "updated_at",                                        :null => false
     t.string   "serial_number",     :limit => 10
+    t.boolean  "status",                          :default => true
   end
 
   add_index "alarms", ["subscriber_id"], :name => "index_alarms_on_subscriber_id"

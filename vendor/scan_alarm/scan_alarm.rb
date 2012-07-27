@@ -9,12 +9,22 @@ require 'rubygems'
 require 'connection_to_commutation_system_telnet'
 require 'active_record'
 require 'time' # Разбор строки для извленения даты
+require 'colored' # Цветной вывод на экран
+
+
 # Подключение к БД
-ActiveRecord::Base.establish_connection(:adapter => 'sqlite3',
-  :database => '/home/sa/Ruby/SipMonitor/db/development.sqlite3',
-  :pool => 5,
-  :timeout => 5000,
-  :encoding => 'utf8')
+#ActiveRecord::Base.establish_connection(:adapter => 'sqlite3',
+#  :database => '/home/sa/Ruby/SipMonitor/db/development.sqlite3',
+#  :pool => 5,
+#  :timeout => 5000,
+#  :encoding => 'utf8')
+ActiveRecord::Base.establish_connection(
+ adapter: 'mysql',
+  encoding: 'utf8',
+  database: 'sip_monitor',
+  username: 'root',
+  password: 'sersin',
+  host: 'localhost')
 
 # Таблица аварий
 class Alarms < ActiveRecord::Base
@@ -61,7 +71,12 @@ class Malicious
   # Отметка в БД о активности 
   def scan_activ
     begin
-      Scaners.update(1, last_time: Time.now)
+      last_record = Scaners.last
+      if last_record
+        Scaners.update(last_record, last_time: Time.now)
+      else
+        Scaners.new(last_time: Time.now).save
+      end
     rescue => err
       puts "Ошибка обновления состояния сканера => #{err.to_s}"
     end
@@ -71,8 +86,12 @@ class Malicious
   # Взаимодействие с БД
   def interaction_db(data_alarm)
     begin # Запись в БД
-      subscriber_id = Subscribers.select(:id).where(eid: data_alarm[:eid]) # Запрос в БД данный номер стоит под наблюдением.
-      return "no control" if subscriber_id.length == 0
+      subscriber_id = Subscribers.select(:id).where(eid: data_alarm[:eid], control: true).last # Запрос в БД данный номер стоит под наблюдением.
+      return "no control" unless subscriber_id
+
+      # Все предыдущие записи об авариях для данного абонента делаем не актуальными. Поле status = false
+      Alarms.where(subscriber_id.id, status: true).each{ |record| record.update_column(:status, false)}
+
       # Если есть признак восстановления аварии, то в БД ищем данный номер аварии и дополняем поле cleared_time.
       if data_alarm[:cleared_time]
         alarm_id = Alarms.select(:id).where(serial_number: data_alarm[:serial_number])
@@ -85,7 +104,7 @@ class Malicious
       else # Если нет признака восстановления аварии, то создаем новую запись в БД аварий.
         new_record = Alarms.new(alarm_raised_time: data_alarm[:alarm_raised_time],
                                data: data_alarm[:data],
-                               subscriber_id: subscriber_id.first.id, # !!! Потенциальные ошибки
+                               subscriber_id: subscriber_id.id, # !!! Потенциальные ошибки
                                serial_number: data_alarm[:serial_number])
         new_record.save
       end
@@ -115,7 +134,22 @@ class Malicious
   # Вывод информации о хулиганском вызове пользователю
   def notification(data_alarm,  save_db = nil)
     # Вывод данных о хулиганском вызове на терминал сервера
-    puts "#{@ats.options[:host].ljust(16)} Номер => #{data_alarm[:eid].ljust(10)}  Авария => #{data_alarm[:serial_number].ljust(10)} Время аварии => #{data_alarm[:alarm_raised_time]}  Время востановления => #{data_alarm[:cleared_time]} DB => #{save_db}"
+    str_alarm =  "EID => #{data_alarm[:eid].ljust(10)}  Авария => #{data_alarm[:serial_number].ljust(7)} Время => #{data_alarm[:alarm_raised_time].strftime("%H:%M:%S")} DB => #{save_db.to_s.ljust(10)} "
+    if data_alarm[:cleared_time]
+      str_alarm << " Востановление => #{data_alarm[:cleared_time] - data_alarm[:alarm_raised_time]} сек." 
+    end
+    case save_db
+      when true    
+        puts str_alarm.green
+      when false
+        puts str_alarm.red
+      when "no search original alarm"
+        puts str_alarm.yellow
+      when "no control"
+         puts str_alarm
+    else
+      puts str.red.underline
+    end
   end
 
   # Отслеживание хулиганских вызовов
