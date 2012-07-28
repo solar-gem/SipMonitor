@@ -260,6 +260,7 @@ ru:
         number: Номер телефона
         area: Код города
         area_number: Полный номер
+        address: Адрес
     errors:
       models:
         subscriber:

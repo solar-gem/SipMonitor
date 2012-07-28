@@ -7,6 +7,7 @@ class SessionsController < ApplicationController
 
   def new
     redirect_to '/alarms' if current_user # Если пользователь ранее уже был зарегистрирован, то при переходе на станицу авторизации (корень сайта) его автоматически направляют на рабочую страницу
+    redirect_to '/users/new' unless User.last
   end
 
   def create

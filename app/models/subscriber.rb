@@ -28,54 +28,63 @@ class Subscriber < ActiveRecord::Base
 
   # Запрашиваем Equipment ID со станции
   ###  validate :request_EID_from_station
-  if (validates(:number, {:uniqueness => true, :length => { :in => 5..7 }}) && 
-      validates(:area, {:length => { :in => 3..5 }}) &&
-      validates_with(SumAreaNumberValidator)
-     )
-     validates :eid, :presence => true, :if => :request_EID_from_station # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
-  end
+  validates(:number, {uniqueness: true, length: { in: 5..7 }}) 
+  validates(:area, {:length => { :in => 3..5 }})
+  validates_with(SumAreaNumberValidator)
 
+  ###validates :eid, :presence => true
+     
+      
+  after_validation :request_EID_from_station # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
+  validates :eid, :presence => true
+    
 
+     protected
      # Запрашиваем Equipment ID со станции
      def request_EID_from_station
-       ats =  ConnectionTelnet_SoftX.new(
+       
+@ats =  ConnectionTelnet_SoftX.new(
          :name => "SoftX",
          :version => "SoftX3000",
          :host => "10.200.16.8",
          :username => "opts270",
-      :password => "270270")
+         :password => "270270")
+
+      puts @ats
+      puts '2' * 50
 
       begin
-        ats.connect
+        @ats.connect
       rescue
         errors.add(:connect, "Не удалось подключиться к станции для запроса Equipment ID!") 
         return nil
       end
 
       begin
-        ats.login
+        @ats.login
       rescue
         errors.add(:login, "Не удалось авторизироваться на станции для запроса Equipment ID!") 
         return nil
       end
+      
 
       begin
-        ats.cmd("LST SBR: D=K'#{number}, LP=0;")
+        @ats.cmd("LST SBR: D=K'#{number}, LP=0;")
       rescue
         errors.add(:cmd, "Не удалось получить данные со станции при запросе Equipment ID!") 
         return nil
       end
 
-      if ats.answer[:successful]
+      if @ats.answer[:successful]
         # Проверка является ли абонент SIP
-        unless ats.answer[:data][/Port type  =  SIP subscriber/]
+        unless @ats.answer[:data][/Port type  =  SIP subscriber/]
           errors.add(:cmd, "Номер #{number} не является SIP.")
           return nil
         end
 
         # !!! Нужно добавить более полную проверку ошибок.
         # !!! Нужно искать не только EID абонента, но и LP по коду города. Есть проблема с несколькими LP в городе и они завязаны на не правильный Area код (код города)
-        self.eid = ats.answer[:data][/(?<=Equipment ID  =  )\d+/]
+        self.eid = @ats.answer[:data][/(?<=Equipment ID  =  )\d+/]
 
       else
         errors.add(:cmd, "Номер #{number} не прописан на станции. Не удалось запросить Equipment ID на станции.")

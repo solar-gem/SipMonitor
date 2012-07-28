@@ -1,7 +1,16 @@
 <div class="follow_form" id="follow_form">
-  <p class="t-right"><span class="high">Активность сканера: 
-  <%= ((Time.now + 14400) - Scaner.select(:last_time).last.last_time).round %>
-  сек. назад
+  <p class="t-right"><span class="high"><strong>Активность сканера: </strong>
+    <% if Scaner.last %>
+       <%= ((Time.now + 14400) - Scaner.select(:last_time).last.last_time).round %>
+     cек. назад
+    <% else %>
+       <%= %>
+       ещё не был запущен
+    <% end %>
+
+
+
+ 
 </span>
   <h3 class="tit">Аварийная панель</h3> 
   <table>

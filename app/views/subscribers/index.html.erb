@@ -18,7 +18,7 @@
       <td><%= subscriber.name %></td>
       <td><%= subscriber.address %></td>
       <td align="center"><%= subscriber.control == true ? 'есть' : 'нет' %></td>
-      <td><%= link_to 'modif', :action => :edit, :id => subscriber.id %></td>
+      <td><%= link_to 'Изменить', :action => :edit, :id => subscriber.id %></td>
     </tr>
   <% end %>
 </table>

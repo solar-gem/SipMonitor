@@ -1,17 +1,24 @@
 # coding: utf-8
 
 class SubscribersController < ApplicationController
+
+
+  
+
+
   def index
     @subscribers = Subscriber.all
 
   end  
 
   def new
+    redirect_to("/sessions/new") unless current_user
     @subscriber = Subscriber.new
   end
 
   def create
     @subscriber = Subscriber.new(params[:subscriber])
+    
     if @subscriber.save
       redirect_to :action => :index
     else

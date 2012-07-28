@@ -259,7 +259,7 @@ ru:
       subscriber:
         number: Номер телефона
         area: Код города
-        area_number:  
+        area_number: Полный номер
     errors:
       models:
         subscriber:
