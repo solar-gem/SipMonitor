@@ -7,7 +7,6 @@ class CreateSubscribers < ActiveRecord::Migration
       t.string :name                                # Кому принадлежит 
       t.string :address                             # Адрес где расположен
       t.boolean :control, :default => 'false'       # Отметка о необходимости постановки под контроль
-
       t.timestamps
     end
   end
