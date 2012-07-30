@@ -35,11 +35,11 @@ class Subscriber < ActiveRecord::Base
   ###validates :eid, :presence => true
      
       
-  after_validation :request_EID_from_station # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
+ # before_validation :request_EID_from_station # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
   validates :eid, :presence => true
     
 
-     protected
+     #protected
      # Запрашиваем Equipment ID со станции
      def request_EID_from_station
        
@@ -86,6 +86,8 @@ class Subscriber < ActiveRecord::Base
         # !!! Нужно искать не только EID абонента, но и LP по коду города. Есть проблема с несколькими LP в городе и они завязаны на не правильный Area код (код города)
         self.eid = @ats.answer[:data][/(?<=Equipment ID  =  )\d+/]
 
+puts '#' * 50
+puts eid
       else
         errors.add(:cmd, "Номер #{number} не прописан на станции. Не удалось запросить Equipment ID на станции.")
         return nil

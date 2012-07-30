@@ -18,7 +18,9 @@ class SubscribersController < ApplicationController
 
   def create
     @subscriber = Subscriber.new(params[:subscriber])
-    
+    # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
+    @subscriber.request_EID_from_station
+
     if @subscriber.save
       redirect_to :action => :index
     else
@@ -27,8 +29,8 @@ class SubscribersController < ApplicationController
   end
   def edit
     @subscriber = Subscriber.find(params[:id])
-    render :new
   end
+  
   def update
     @subscriber = Subscriber.find(params[:id])
 
