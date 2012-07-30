@@ -1,0 +1,42 @@
+<h3 class="tit">Редактирование данных абонента для постановки под наблюдение</h3>
+<fieldset>
+
+  
+    <%= form_for @subscriber do |f| %>
+    <table class="nostyle">
+      <% if @subscriber.errors.any? %>
+        <div class="error_messages">      
+          <ul>
+            <% for message in @subscriber.errors.full_messages %>
+              <p class="msg error"><%= message %></p>          
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <tr>
+        <!-- <td style="width:70px;">Номер абонента</td> -->
+        <td><%= f.label :number, style: "width:70px;" %></td>
+        <td><%= f.telephone_field(:area, {:placeholder=>"код города", disabled: true, :maxlength=>"5", :size=>"10", :class=>"input-text"}) %>&nbsp;&nbsp;&nbsp;&nbsp;<%= f.telephone_field(:number, {:placeholder=>"номер абонента", disabled: true, :maxlength=>"7", :size=>"25", :class=>"input-text"}) %></td>
+      </tr>
+      <tr>
+        <td style="width:70px;">Принадлежность</td>
+        <td><%= f.text_field :name, {:placeholder=>"Название организации", :maxlength=>"30", :size=>"40", :class=>"input-text"} %></td>
+      </tr>
+      <tr>
+        <!-- <td style="width:70px;">Адрес</td> -->
+        <td><%= f.label :address %></td>
+        <td><%= f.text_field :address, {:maxlength=>"40", :size=>"40", :class=>"input-text"} %></td>
+      </tr>
+      <td></td>
+      <td><label><%= f.check_box :control %>Поставить под контроль?</label> &nbsp;</td>
+       <tr>
+         <td colspan="2" class="t-right"><%= f.submit "Сохранить", class: "input-submit"%></td>
+       </tr>
+
+
+    </table>
+      <% end %>
+    
+  </fieldset>
+  
