@@ -4,7 +4,8 @@
   <title>Авторизация</title>
  
 <%= stylesheet_link_tag "sessions", :media => "all" %>
- 
+<%= stylesheet_link_tag "dashboard/main", "dashboard/reset", "dashboard/style", "dashboard/mystyle", :media => "screen,projection" %>
+
 </head>
 
 <body class='sessions'>

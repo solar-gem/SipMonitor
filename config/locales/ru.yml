@@ -261,12 +261,21 @@ ru:
         area: Код города
         area_number: Полный номер
         address: Адрес
+        eid: Equipment ID
+        name: Принадлежность
+        cmd: Ответ станции. 
+        connect: Подключение к станции.
+        login: Авторизация на станции. 
+        db: База данных.
     errors:
       models:
         subscriber:
           number:
             blank: "Придумай пароль, в котором больше 0 символов  ;)"
 
+
+  
+  
 
 
 

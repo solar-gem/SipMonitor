@@ -1,0 +1,43 @@
+<!-- Tabs -->
+<h3 class="tit">Информация по абоненту&nbsp;&nbsp;&nbsp;&nbsp;<%= @subscriber_str %></h3>
+
+<div class="tabs box">
+  <ul>
+    <li><a href="#tab01"><span>Данные абонента</span></a></li>
+    <li><a href="#tab02"><span>Активные аварии</span></a></li>
+    <li><a href="#tab03"><span>История аварий</span></a></li>
+  </ul>
+</div> <!-- /tabs -->
+
+<!-- Tab01 -->
+<div id="tab01">
+
+  <%= render :partial => 'edit_form'  %>
+
+</div> <!-- /tab01 -->
+
+<!-- Tab02 -->
+<div id="tab02">
+
+  
+<%= render :partial => 'alarms_subscriber' if @alarms.length > 0 %>
+
+
+
+</div> <!-- /tab02 -->
+
+<!-- Tab03 -->
+<div id="tab03">
+
+<%= render :partial => 'alarms_history_subscriber' if @alarms_history.length > 0 %>
+
+</div> <!-- /tab03 -->
+
+
+
+
+
+
+
+
+

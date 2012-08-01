@@ -4,8 +4,8 @@ require 'connection_to_commutation_system_telnet'
 # Сумма из кода города и номера телефона должна быть 10 цифр
 class SumAreaNumberValidator < ActiveModel::Validator
   def validate(record)
-    if (record.area + record.number).length != 10
-      record.errors[:area_number] << "не соотвествует зоновому номеру. Код города и номер телефона в сумме должны быть 10 цифр."
+    if record.area && record.number && ((record.area + record.number).length != 10)
+      record.errors[:area_number] << "не соотвествует формату зонового номера. Код города и номер телефона в сумме должны быть 10 цифр."
     end
   end
 end
@@ -17,38 +17,31 @@ end
 class Subscriber < ActiveRecord::Base
 
   has_many :alarm
-  attr_accessible :address, :control, :name, :number, :area, :eid
+  attr_accessible :address, :control, :name, :number, :area, :eid, :full_number
 
-  #validates :number, {:length => { :in => 5..7 }}
-  #validates :area, {:length => { :in => 3..5 }}
+  # Полный номер абонента. Для облегчения поиска когда пользователь в view/application производит поиск по номеру телефона.
+  before_save do |subscriber|
+   subscriber.full_number = subscriber.area + subscriber.number
+  end
+
+
+  validates :area, {length:  { :in => 3..5 }}
+  validates :number, {length: { in: 5..7 }}
+  validates_uniqueness_of :full_number
 
   # Сумма из кода города и номера телефона должна быть 10 цифр
   include ActiveModel::Validations
-  #validates_with SumAreaNumberValidator
-
-  # Запрашиваем Equipment ID со станции
-  ###  validate :request_EID_from_station
-  validates(:number, {uniqueness: true, length: { in: 5..7 }}) 
-  validates(:area, {:length => { :in => 3..5 }})
   validates_with(SumAreaNumberValidator)
 
-  ###validates :eid, :presence => true
-     
-      
- # before_validation :request_EID_from_station # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
-  validates :eid, :presence => true
-    
+  # Запрашиваем Equipment ID со станции
+  def request_EID_from_station
 
-     #protected
-     # Запрашиваем Equipment ID со станции
-     def request_EID_from_station
-       
-@ats =  ConnectionTelnet_SoftX.new(
-         :name => "SoftX",
-         :version => "SoftX3000",
-         :host => "10.200.16.8",
-         :username => "opts270",
-         :password => "270270")
+    @ats =  ConnectionTelnet_SoftX.new(
+      :name => "SoftX",
+      :version => "SoftX3000",
+      :host => "10.200.16.8",
+      :username => "opts270",
+      :password => "270270")
 
       puts @ats
       puts '2' * 50
@@ -66,19 +59,23 @@ class Subscriber < ActiveRecord::Base
         errors.add(:login, "Не удалось авторизироваться на станции для запроса Equipment ID!") 
         return nil
       end
-      
+
 
       begin
         @ats.cmd("LST SBR: D=K'#{number}, LP=0;")
       rescue
-        errors.add(:cmd, "Не удалось получить данные со станции при запросе Equipment ID!") 
+
+        self.errors.add(:cmd, "Не удалось получить данные при запросе Equipment ID!") 
+        puts '5' * 50
         return nil
       end
 
       if @ats.answer[:successful]
         # Проверка является ли абонент SIP
         unless @ats.answer[:data][/Port type  =  SIP subscriber/]
-          errors.add(:cmd, "Номер #{number} не является SIP.")
+          self.errors.add(:cmd, "Номер #{number} не является SIP.")
+          puts '#' * 50
+          p self.errors
           return nil
         end
 
@@ -86,10 +83,13 @@ class Subscriber < ActiveRecord::Base
         # !!! Нужно искать не только EID абонента, но и LP по коду города. Есть проблема с несколькими LP в городе и они завязаны на не правильный Area код (код города)
         self.eid = @ats.answer[:data][/(?<=Equipment ID  =  )\d+/]
 
-puts '#' * 50
-puts eid
+        puts '#' * 50
+        p self.errors
+        puts eid
       else
-        errors.add(:cmd, "Номер #{number} не прописан на станции. Не удалось запросить Equipment ID на станции.")
+        self.errors.add(:cmd, "Номер #{number} не прописан.")
+        puts '7' * 50
+        p self.errors
         return nil
       end
 

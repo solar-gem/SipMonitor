@@ -1,0 +1,29 @@
+<h3 class="tit">Пользователи</h3>
+
+<table>
+  <tr>
+    <th>email</th>
+    <th>Права</th>
+    <th>Изменён</th>
+    <th>Операции</th>
+  </tr>
+  <% i = 0 %>
+  <% @users.each do |user| %>
+    <% i += 1 %>
+    <tr <%= raw "class=\"bg\"" if (i % 2).zero? %> >
+      <td><%= user.email %></td>
+      <td><%= "оператор" %></td>
+      <td><%= user.updated_at.strftime("%H:%M:%S %d-%m-%Y") %></td>      
+      <td><%= link_to 'Информация'%>&nbsp;
+        <%= link_to 'Изменить' %>&nbsp;
+        <%= link_to 'Удалить', :method => :delete, :data => { :confirm => "Вы действительно хотите удалить пользователя #{user.email}?"} %></td>
+    </tr>
+  <% end %>
+</table>
+
+
+
+
+
+
+

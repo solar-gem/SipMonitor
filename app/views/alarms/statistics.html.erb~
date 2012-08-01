@@ -1,10 +1,187 @@
+<!-- 
+Используется плагин для отрисовки графиков
+http://graph.prootime.ru/
+http://prootime.ru/5graph-jquery-pugin
+ -->
+
 <!-- Definition List -->
 <h3 class="tit">Общая статистика</h3>
 <dl>
-		<dt>Абонентов прописано</dt>
-		<dd><%= Subscriber.all.length %></dd>
-		<dt>Абонентов мониторится</dt>
-		<dd><%= Subscriber.where(:control => true).length %></dd>
-		<dt>Абонентов зарегестрировано</dt>
-		<dd>Lorem ipsum dolor sit amet.</dd>
+  <dt>Абонентов прописано</dt>
+  <dd><%= @sub_all %></dd>
+  <dt>Абонентов мониторится</dt>
+  <dd><%= @sub_all_control %></dd>
+  
+  <dt>Абонентов в аварии</dt>
+  <dd><%= @sub_alarm %></dd>
+
+
+  <dt>Абонентов зарегестрировано</dt>
+  <dd><%= @sub_all_control - @sub_alarm %></dd>
 </dl>
+
+<h5 class="tit">График статистики аварий за сегодня</h5>
+ <canvas id='example' width="700">
+      Этот текст отобразится если браузер не поддерживает html5 элемент canvas.
+</canvas>
+
+ <script type="text/javascript">
+
+	
+
+
+<% def alarm_count(t1, t2) %>
+  <% Alarm.where(:alarm_raised_time => (Time.utc(Time.now.year, Time.now.month, Time.now.day, t1))..Time.utc(Time.now.year, Time.now.month, Time.now.day, t2)).count %>
+<% end %>
+
+<% def alarm_cleared_count(t1, t2) %>
+  <% Alarm.where(:cleared_time => (Time.utc(Time.now.year, Time.now.month, Time.now.day, t1))..Time.utc(Time.now.year, Time.now.month, Time.now.day, t2)).count %>
+<% end %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+var properties = {
+        "background":"#ffffff", //общий фон 
+        "linescolor":"#dbdbdb", //цвет сетки
+        "lineswidth":1, //ширина линий сетки
+        "gridwidth":1, //минимальное расстояние между вертикальными линиями
+        "gorizontfontcolor":"#969696", //цвет текста на горизонтальных линиях
+        "verticalfontcolor":"#969696", //цвет текста на вертикальных линиях
+        "gorizontfont":"bold 8px Arial", //шрифт на горизонтальных линиях
+        "verticalfont":"bold 12px Arial", //шрифт на вертикальных линиях
+};
+
+
+var hints = {
+        'background':'#fff', //фон подсказки
+        'bordercolor':'#000', //цвет границы
+        'borderwidth':2, //ширина границы
+        'paddingtb':2, //отступы сверху и снизу
+        'paddinglr':5, //отступы слева и справа
+        'borderradius':6, //закругленность прямоугольника
+        'lineheight':2, //расстояние между строками
+        'font':[ //шрифты построчно
+        {'color':'#ff0000','font':'bold 12px Verdana'},            
+        {'color':'#008000','font':'bold 12px Verdana'}    
+        ]
+};
+
+//массив для построения графика
+var data = {'graph': [
+        {'point': [
+        {"val": <%= alarm_count(0, 1) %>, "gval":"00:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(1, 2) %>, "gval":"01:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(2, 3) %>, "gval":"02:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(3, 4) %>, "gval":"03:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(4, 5) %>, "gval":"04:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(5, 6) %>, "gval":"05:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(6, 7) %>, "gval":"06:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(7, 8) %>, "gval":"07:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(8, 9) %>, "gval":"08:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(9, 10) %>, "gval":"09:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(10, 11) %>, "gval":"10:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(11, 12) %>, "gval":"11:00", "desc": "Аварии"},
+	{"val": <%= alarm_count(12, 13) %>, "gval":"12:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(13, 14) %>, "gval":"13:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(14, 15) %>, "gval":"14:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(15, 16) %>, "gval":"15:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(16, 17) %>, "gval":"16:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(17, 18) %>, "gval":"17:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(18, 19) %>, "gval":"18:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(19, 20) %>, "gval":"19:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(20, 21) %>, "gval":"20:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(21, 22) %>, "gval":"21:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(22, 23) %>, "gval":"22:00", "desc": "Аварии"},
+        {"val": <%= alarm_count(23, 24) %>, "gval":"23:00", "desc": "Аварии"}  
+        ],
+        'properties':{
+        'linecolor':'#ff0000', //цвет линий соединящих точки графика
+        'pointcolor':'#ff0000', //цвет точек
+        'spacecolor':'#8cb9c8', //цвет области под графиком
+        'linewidth':2, //толщина линий соединяющие точки
+        'pointradius':3, //радиус точек
+        'spacealpha':0.1, //степень прозрачности области под графиком
+        'activepointwidth':4 //радиус активной точки
+        }
+        },
+        {'point': [
+        {"val": <%= alarm_cleared_count(0, 1) %>, "gval":"00:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(1, 2) %>, "gval":"01:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(2, 3) %>, "gval":"02:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(3, 4) %>, "gval":"03:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(4, 5) %>, "gval":"04:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(5, 6) %>, "gval":"05:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(6, 7) %>, "gval":"06:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(7, 8) %>, "gval":"07:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(8, 9) %>, "gval":"08:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(9, 10) %>, "gval":"09:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(10, 11) %>, "gval":"10:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(11, 12) %>, "gval":"11:00", "desc": "Востановление"},
+	{"val": <%= alarm_cleared_count(12, 13) %>, "gval":"12:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(13, 14) %>, "gval":"13:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(14, 15) %>, "gval":"14:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(15, 16) %>, "gval":"15:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(16, 17) %>, "gval":"16:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(17, 18) %>, "gval":"17:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(18, 19) %>, "gval":"18:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(19, 20) %>, "gval":"19:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(20, 21) %>, "gval":"20:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(21, 22) %>, "gval":"21:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(22, 23) %>, "gval":"22:00", "desc": "Востановление"},
+        {"val": <%= alarm_cleared_count(23, 24) %>, "gval":"23:00", "desc": "Востановление"}  
+        ],
+        'properties':{
+        'linecolor':'#008000', //цвет линий соединящих точки графика
+        'pointcolor':'#008000', //цвет точек
+        'spacecolor':'#F1AA7A', //цвет области под графиком
+        'linewidth':2, //толщина линий соединяющие точки
+        'pointradius':3, //радиус точек
+        'spacealpha':0.1, //степень прозрачности области под графиком
+        'activepointwidth':4 //радиус активной точки
+        }
+        }]};
+
+
+
+
+
+
+
+
+
+
+
+
+
+      $(document).ready(function(){
+          
+	plotgraph('#example',data,properties,hints)
+
+          });
+        </script>
+

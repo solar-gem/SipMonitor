@@ -1,7 +1,10 @@
 SipMonitor::Application.routes.draw do
 
-  resources :subscribers
-  get "dashboard/index"
+  resources :subscribers do
+    collection do
+      get 'search'
+    end
+  end
   resources :alarms do
     collection do
       get 'statistics'

@@ -90,13 +90,13 @@ class Malicious
       return "no control" unless subscriber_id
 
       # Все предыдущие записи об авариях для данного абонента делаем не актуальными. Поле status = false
-      Alarms.where(subscriber_id.id, status: true).each{ |record| record.update_column(:status, false)}
+      Alarms.where(subscriber_id: subscriber_id.id, status: true).each{ |record| record.update_column(:status, false)}
 
       # Если есть признак восстановления аварии, то в БД ищем данный номер аварии и дополняем поле cleared_time.
       if data_alarm[:cleared_time]
         alarm_id = Alarms.select(:id).where(serial_number: data_alarm[:serial_number])
         if alarm_id.length != 0
-          Alarms.update(alarm_id.first.id, cleared_time: data_alarm[:cleared_time])
+          Alarms.update(alarm_id.first.id, cleared_time: data_alarm[:cleared_time], data: data_alarm[:data])
           return true
         else
           return "no search original alarm"
@@ -192,6 +192,7 @@ class Malicious
             notification(result, result_db)
                                  
           end # if
+          
         end # do
         ###ats_actives   # Фиксируем активность демона в БД
       end # loop
@@ -233,11 +234,11 @@ ats =  ConnectionTelnet_SoftX_scan_alm.new(
     time_alarm = Time.parse(text_alarm[/(?<=NNov-SoftX        ).+/])
     serial_number = text_alarm[/(?<=ALARM  )\d+/]
     sync_serial_number = text_alarm[/(?<=Sync serial No.  =  )\d+/]
-    alarm_raised_time = Time.parse(text_alarm[/(?<=Alarm raised time  =  ).+/])
+    alarm_raised_time = Time.parse(text_alarm[/(?<=Alarm raised time  =  ).+/]).utc
     eid = text_alarm[/(?<=EID=)\d+/]
     alarm_cause = text_alarm[/(?<=Alarm cause  =  ).+\n*.*(?=\n      Repair actions)/]
     search_cleared_time_str = text_alarm[/(?<=Cleared time  =  ).+/]
-    cleared_time = Time.parse(search_cleared_time_str) if search_cleared_time_str
+    cleared_time = Time.parse(search_cleared_time_str).utc if search_cleared_time_str
     {data: text_alarm, time_alarm: time_alarm, serial_number: serial_number, 
      sync_serial_number: sync_serial_number,
      alarm_raised_time: alarm_raised_time, eid: eid, 

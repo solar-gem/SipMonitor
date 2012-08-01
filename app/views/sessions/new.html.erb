@@ -10,11 +10,11 @@
 <%= form_tag sessions_path, :class=>'sessions' do %>
   <div class="field">
     <%= label_tag :email, "Введите email пользователя" %>
-    <%= text_field_tag :email, params[:email] %>
+    <%= text_field_tag :email, params[:email] %>Для тестового входа <b>test</b>
   </div>
   <div class="field">
     <%= label_tag :password, "Пароль" %>
-    <%= password_field_tag :password %>
+    <%= password_field_tag :password %>Для тестового входа <b>test</b>
   </div>
   <div class="actions"><%= submit_tag "Вход" %></div>
 <% end %>

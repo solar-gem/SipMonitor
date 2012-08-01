@@ -1,23 +1,11 @@
-<h3 class="tit">Активные аварии</h3>
- 
-<table>
-  <tr>
-    <th>Номер абонента</th>
-    <th>Время начала аварии</th>
-    <th>Время завершения аварии</th>
-    <th>Просмотр</th>
-  </tr>
- <% i = 0 %>
-  <% @alarms.each do |alarm| %>
-    <% i += 1 %>
-    <tr <%= raw "class=\"bg\"" if (i % 2).zero? %> >
-      <td><%= Subscriber.find(alarm.subscriber_id).number %></td>
-      <td><%= alarm.alarm_raised_time %></td>
-      <td><%= alarm.cleared_time %></td>      	
-    </tr>
-  <% end %>
-</table>
+<font size="2" face="Courier"><%== @alarm.data.gsub(/\n/, '</br>').gsub(' ', '&nbsp;') %></font>
+<p class="t-center">
+
+<%= link_to 'Вернуться назад', '/alarms' unless :serch %>
+
+<%= link_to 'Вернуться назад', "/subscribers/search?number=#{:serch}" if :serch %>
 
 
 
+</p>
 

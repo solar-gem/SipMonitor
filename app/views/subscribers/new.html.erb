@@ -1,7 +1,5 @@
 <h3 class="tit">Добавление нового абонента для постановки под наблюдение</h3>
 <fieldset>
-
-  
     <%= form_for @subscriber do |f| %>
     <table class="nostyle">
       <% if @subscriber.errors.any? %>
@@ -16,16 +14,20 @@
 
       <tr>
         <!-- <td style="width:70px;">Номер абонента</td> -->
-        <td><%= f.label :number, style: "width:70px;" %></td>
+        <td style="width:70px;" nowrap><%= f.label :number, style: "width:70px;" %></td>
         <td><%= f.telephone_field(:area, {:placeholder=>"код города", :maxlength=>"5", :size=>"10", :class=>"input-text"}) %>&nbsp;&nbsp;&nbsp;&nbsp;<%= f.telephone_field(:number, {:placeholder=>"номер абонента", :maxlength=>"7", :size=>"25", :class=>"input-text"}) %></td>
       </tr>
       <tr>
-        <td style="width:70px;">Принадлежность</td>
+        <td style="width:70px;"><%= f.label :eid, style: "width:70px;" %></td>
+        <td><%= f.text_field :eid, {:placeholder=>"Если не указать, будет запрошен на станции", :maxlength=>"32", :size=>"40", :class=>"input-text"} %></td>
+      </tr>
+
+      <tr>
+        <td style="width:70px;"><%= f.label :name %></td>
         <td><%= f.text_field :name, {:placeholder=>"Название организации", :maxlength=>"30", :size=>"40", :class=>"input-text"} %></td>
       </tr>
       <tr>
-        <!-- <td style="width:70px;">Адрес</td> -->
-        <td><%= f.label :address %></td>
+        <td style="width:70px;"><%= f.label :address %></td>
         <td><%= f.text_field :address, {:maxlength=>"40", :size=>"40", :class=>"input-text"} %></td>
       </tr>
       <td></td>

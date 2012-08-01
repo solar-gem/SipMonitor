@@ -1,0 +1,26 @@
+Максимально 10 последних записей
+<div class="alarms_history_subscriber" id="alarms_history_subscriber"> 
+<table>
+  <tr>
+    <th>Номер абонента</th>
+    <th>Время начала аварии</th>
+    <th>Восстановление</th>
+    <th>Просмотр</th>
+  </tr>
+
+  <% i ||= 1 %>
+  <% @alarms_history.each do |alarm| %>
+
+    <tr <%= raw "class=\"bg\"" if (i % 2).zero? %> >
+
+      <%  full_number_str = Subscriber.find(alarm.subscriber_id).full_number %>
+      <td><%= full_number_str %></td>      
+      <td><%= alarm.alarm_raised_time.utc.strftime("%H:%M:%S %d-%m-%Y") %></td>
+      <td><%= alarm.cleared_time ? alarm.cleared_time.utc.strftime("%H:%M:%S %d-%m-%Y") : 'не определено' %></td>
+      <td><%= link_to 'Просмотреть', :controller => :alarms, :action => :show, :id => alarm.id, search_number: full_number_str %></td>
+
+    </tr>
+    <% i += 1 %>
+  <% end %>
+</table>
+</div>

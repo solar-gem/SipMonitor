@@ -27,7 +27,7 @@
 
 
 
-        <%= javascript_tag do %>
+       <%= javascript_tag do %>
           $(document).ready(
           function(){
           setInterval(function(){
@@ -39,6 +39,23 @@
           }, 10000 );
           });
         <% end %>
+
+<script type="text/javascript">
+$(function () {
+    var d1 = [];
+    for (var i = 0; i < 14; i += 0.5)
+        d1.push([i, Math.sin(i)]);
+
+    var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
+
+    // a null signifies separate line segments
+    var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
+    
+    $.plot($("#placeholder"), [ d1, d2, d3 ]);
+});
+</script>
+
+
 
 
 
@@ -108,9 +125,13 @@
 
 
               <li><a href="/alarms/statistics"><span>Статистика</span></a></li>
-              <li><a href="#"><span>Пользователи</span></a></li>	
-              <li class="f-right"><%= audio_tag "Critical.wav", :controls => true, :autobuffer => true, :autoplay => false, :loop => true %></li>
               
+              <!-- <li><%= link_to users_path do %><span>Пользователи</span><% end %></li>-->
+
+              	
+<!-- Управление аудио проигрывателем              
+              <li class="f-right"><%= audio_tag "Critical.wav", :controls => true, :autobuffer => true, :autoplay => false, :loop => true %></li>
+-->
             </ul>
 
           </div> <!-- /header -->
@@ -131,12 +152,29 @@
 
                 <!-- Search -->
 
-                <%= form_tag(subscribers_path, :method => "get", :id=>"search") do %>
+                <%= form_tag(search_subscribers_path, :method => "get", :id=>"search") do %>
                   <fieldset>
                     <legend>Номер абонента</legend>
-                    <p><%= telephone_field_tag('', nil, :class => 'input-text', :size => 17, :placeholder=>"10 знаков", :maxlength => 10) %>&nbsp;<%= submit_tag("OK", :class => 'input-submit-02') %><br />
+                    <p><%= telephone_field_tag(:number, nil, :class => 'input-text', :size => 17, :placeholder=>"10 знаков", :maxlength => 10, pattern: "8[0-9]{9,}") %>&nbsp;<%= submit_tag("OK", :class => 'input-submit-02') %><br />
                     </fieldset>
                   <% end %> 
+
+
+
+                 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -183,7 +221,10 @@
 
             <!-- Footer -->
             <div id="footer" class="box">
-              <p class="f-left">&copy; 2012 <a href="#">Сергей Синтялёв</a>, Все права защищены &reg;</p>
+              <p class="f-left">&copy; 2012 <a href="mailto:s.sintyalev@nnov.volga.rt.ru?subject=Вопрос по программе 'Отслеживание состояния регистрации SIP абонентов'">Синтялёв Сергей Владимирович</a>&nbsp;&nbsp;<strong>Ver. 0.1</strong></p>
+
+
+
             </div> <!-- /footer -->
 
           </div> <!-- /main -->
