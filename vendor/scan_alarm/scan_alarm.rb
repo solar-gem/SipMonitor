@@ -90,13 +90,13 @@ class Malicious
       return "no control" unless subscriber_id
 
       # Все предыдущие записи об авариях для данного абонента делаем не актуальными. Поле status = false
-      Alarms.where(subscriber_id: subscriber_id.id, status: true).each{ |record| record.update_column(:status, false)}
+      Alarms.where(subscriber_id: subscriber_id.id, status: true).each{ |record| record.update_column(:status, false);record.update_column(:cleared_data, data_alarm[:data])}
 
       # Если есть признак восстановления аварии, то в БД ищем данный номер аварии и дополняем поле cleared_time.
       if data_alarm[:cleared_time]
         alarm_id = Alarms.select(:id).where(serial_number: data_alarm[:serial_number])
         if alarm_id.length != 0
-          Alarms.update(alarm_id.first.id, cleared_time: data_alarm[:cleared_time], data: data_alarm[:data])
+          Alarms.update(alarm_id.first.id, cleared_time: data_alarm[:cleared_time], cleared_data: data_alarm[:data])
           return true
         else
           return "no search original alarm"
@@ -151,6 +151,59 @@ class Malicious
       puts str.red.underline
     end
   end
+  # Предварительный запрос состояний абонентов перед запуском сканера
+  def request_status
+    ats_cmd =  ConnectionTelnet_SoftX.new(
+      :name => "Softx",
+      :version => "Softx3000",
+      :address => "",
+      :host => "10.200.16.8",
+      :username => "opts270",
+      :password => "270270")
+
+      ats_cmd.connect
+      ats_cmd.login
+
+
+
+      numbers = Subscribers.where(control:true)
+      numbers.each do |number|
+        cmd_str = "DSP EPST: IEF=DOMAIN1, QUERYBY=METHOD1, TRMTYPE=TRM0, EID=\"#{number.eid}\";"
+        ats_cmd.cmd(cmd_str)
+        if ats_cmd.answer[:successful]
+          if ats_cmd.answer[:data].include? "UnRegistered"
+            puts "Equipment ID=#{number.eid} не зарегистрирован".red
+            # Если абонент не зарегистрирован, а активных аварий в БД нет, то создаём новую аварию
+            if Alarms.where(subscriber_id: number.id, status: true).count == 0
+              begin # Запись в БД
+              new_record = Alarms.new(alarm_raised_time: Time.now,
+                               data: ats_cmd.answer[:data],
+                               subscriber_id: number.id, # !!! Потенциальные ошибки
+                               serial_number: 'DSP EPST:')
+              new_record.save
+              rescue ActiveRecord::RecordNotUnique
+		      "duplicate"
+		    rescue => err
+		      p err
+		      puts $@
+
+		      puts "*" * 40
+		      puts err
+		      false
+		    end
+			    end
+          else
+            puts "Equipment ID=#{number.eid} зарегистрирован".green
+            # Все предыдущие записи об авариях для данного абонента делаем не актуальными. Поле status = false
+            Alarms.where(subscriber_id: number.id, status: true).each{ |record| record.update_column(:status, false);record.update_column(:cleared_data, ats_cmd.answer[:data])}
+
+          end
+        else
+          puts "ERROR. Команда запроса регистрации абонета Equipment ID=#{number.eid} выполниласть не успешно!".red
+        end
+      end
+      ats_cmd.close
+  end
 
   # Отслеживание хулиганских вызовов
   def search
@@ -164,8 +217,10 @@ class Malicious
       
       @tmp_data = "Connect staton"
      ### ats_actives           # Фиксируем активность демона в БД
-
-
+      puts 
+      puts "Запрос исходного состояния всех абонентов стоящих под наблюдением"
+      request_status # Запрос исходного состояния всех абонентов стоящих под наблюдением
+      puts 
 
 
       loop do
@@ -219,7 +274,7 @@ class ConnectionTelnet_SoftX_scan_alm < ConnectionTelnet_SoftX
 end
 
 # Подключемся к станции SoftX3000
-ats =  ConnectionTelnet_SoftX_scan_alm.new(        
+ats =  ConnectionTelnet_SoftX_scan_alm.new(
         :name => "Softx",
         :version => "Softx3000",
         :address => "",
@@ -247,7 +302,6 @@ ats =  ConnectionTelnet_SoftX_scan_alm.new(
 
 
 scanner = Malicious.new(ats)
-
 scanner.search
 
 

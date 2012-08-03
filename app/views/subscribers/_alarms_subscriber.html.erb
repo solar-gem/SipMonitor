@@ -13,7 +13,8 @@
       <%  full_number_str = Subscriber.find(alarm.subscriber_id).full_number %>
       <td><%= full_number_str %></td>
       <td><%= alarm.alarm_raised_time.utc.strftime("%H:%M:%S %d-%m-%Y") %></td>
-      <td><%= link_to 'Просмотреть', :controller => :alarms, :action => :show, :id => alarm.id, search_number: full_number_str %></td>
+      <td><%= link_to 'Просмотреть', :controller => :alarms, :action => :show, :id => alarm.id, search_number: full_number_str %>&nbsp;&nbsp;
+            <%= link_to 'Запросить со станции', :action=>"online_test", :controller=>"subscribers", :id => alarm.subscriber_id, search_number: full_number_str %></td>
     </tr>
     <% i += 1 %>
   <% end %>

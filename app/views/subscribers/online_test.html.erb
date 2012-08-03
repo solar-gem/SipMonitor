@@ -1,0 +1,24 @@
+<% if @subscriber.errors.any? %>
+        <div class="error_messages">      
+          <ul>
+            <% for message in @subscriber.errors.full_messages %>
+              <p class="msg error"><%= message %></p>          
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+Абонент (<%= @subscriber.area %>) <%= @subscriber.number %> <%= @online_test_result %> на станции в данный момент.
+<p></p>
+<div id="show_alarm">
+<font size="2" face="Courier"><%== @online_test_str.gsub(/\n/, '</br>').gsub(' ', '&nbsp;') %></font>
+
+</div>
+
+<p class="t-center">
+<% if @search_number %>
+  <%= link_to 'Вернуться назад', "/subscribers/search?number=#{@search_number}" %>
+<% else %>
+  <%= link_to 'Вернуться назад', '/alarms' %>
+<% end %>
+</p>

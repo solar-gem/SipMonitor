@@ -1,11 +1,14 @@
+
+
+<div id="show_alarm">
 <font size="2" face="Courier"><%== @alarm.data.gsub(/\n/, '</br>').gsub(' ', '&nbsp;') %></font>
+
+</div>
+
 <p class="t-center">
-
-<%= link_to 'Вернуться назад', '/alarms' unless :serch %>
-
-<%= link_to 'Вернуться назад', "/subscribers/search?number=#{:serch}" if :serch %>
-
-
-
+<% if @search_number %>
+  <%= link_to 'Вернуться назад', "/subscribers/search?number=#{@search_number}" %>
+<% else %>
+  <%= link_to 'Вернуться назад', '/alarms' %>
+<% end %>
 </p>
-

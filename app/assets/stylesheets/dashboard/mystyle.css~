@@ -1,1 +1,10 @@
 /* WRITE YOUR CSS CODE HERE */
+#content table tr.rg td {background-color:#ff0000;}
+
+#show_alarm{
+    height:300px;
+    width:750px;
+    border:1px solid red;
+    overflow-y:auto;
+    padding-right:5px;
+}

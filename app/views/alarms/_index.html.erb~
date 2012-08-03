@@ -1,29 +1,46 @@
 <div class="follow_form" id="follow_form">
-  <p class="t-right"><span class="high">Активность сканера: 
-  <%= ((Time.now + 14400) - Scaner.select(:last_time).last.last_time).round %>
-  сек. назад
-</span>
+
+   
+
+
+  <p class="t-right">
+    <span class="high"><strong>Общее кол-во аварий: </strong><%= @alarms.length %>&nbsp;&nbsp;&nbsp;&nbsp;
+    <strong>Активность сканера: </strong>
+    <% if Scaner.last %>
+       <%= ((Time.now.utc+ 14400) - Scaner.select(:last_time).last.last_time.utc).round %>
+     cек. назад
+    <% else %>
+       <%= %>
+       ещё не был запущен
+    <% end %>
+
+
+
+ 
+  </span>
   <h3 class="tit">Аварийная панель</h3> 
   <table>
     <tr>
       <th>Номер абонента</th>
       <th>Время начала аварии</th>
-      <th>Время завершения аварии</th>
       <th>Просмотр</th>
     </tr>
 
-    <% i ||= 0 %>
+    <% i ||= 1 %>
     <% @alarms.each do |alarm| %>
-      
+
       <tr <%= raw "class=\"bg\"" if (i % 2).zero? %> >
-        <td><%= Subscriber.find(alarm.subscriber_id).number %></td>
-        <td><%= alarm.alarm_raised_time %></td>
-        <td><%= alarm.cleared_time %></td>      	
+        <% full_number_str =  Subscriber.find(alarm.subscriber_id).full_number %>
+        <td><%= link_to full_number_str, :controller => "subscribers", :action => "search", :number => full_number_str %></td>
+        <td><%= alarm.alarm_raised_time.utc.strftime("%H:%M:%S %d-%m-%Y") %></td>
+        <td><%= link_to 'Просмотреть', :action => :show, :id => alarm.id %>&nbsp;&nbsp;
+            <%= link_to 'Запросить со станции', :action=>"online_test", :controller=>"subscribers", :id => subscriber_id %></td>
+
       </tr>
-    <% i += 1 %>
+      <% i += 1 %>
     <% end %>
   </table>
-<%= audio_tag("Critical.wav", :autobuffer => true, :autoplay => true, :loop => true) if @ring %>
+  <%= audio_tag("Critical.wav", :autobuffer => true, :autoplay => true, :loop => true) if @ring %>
 </div>
 
 

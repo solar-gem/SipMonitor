@@ -17,8 +17,9 @@ class SubscribersController < ApplicationController
   def create
     @subscriber = Subscriber.new(params[:subscriber])
     # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
-    @subscriber.request_EID_from_station if params[:subscriber][:eid] == '' && @subscriber.valid?
-
+    @subscriber.preparation_ats # Подготовка. Подключение к станции
+    @subscriber.operation_EID_from_station #if @subscriber.valid?
+  
     if @subscriber.eid && @subscriber.eid != ''
       begin
         if @subscriber.save
@@ -47,6 +48,7 @@ class SubscribersController < ApplicationController
       render 'edit'
     end
   end
+
   def destroy
     @subscriber = Subscriber.find(params[:id])
     @subscriber.destroy
@@ -55,6 +57,18 @@ class SubscribersController < ApplicationController
 
   end
 
+# Запрос состояния абонента на станции
+def online_test
+   @subscriber = Subscriber.find params[:id]
+   @subscriber.preparation_ats # Подготовка. Подключение к станции
+   
+   online_test = @subscriber.test_subsrciber
+   
+   @online_test_str = online_test[:data]
+   @online_test_result = online_test[:result]
+   @search_number = params[:search_number]  
+end
+
   # Поиск аварий по номеру абонета
   def search
     if params[:number] == ''
@@ -62,13 +76,14 @@ class SubscribersController < ApplicationController
     else
       @subscriber = Subscriber.where(full_number: params[:number]).last
       if @subscriber
-puts '@' * 50
-    p @subscriber
+
+ 
 
         @subscriber_id = @subscriber.id
         @subscriber_str = "(#{@subscriber.area})   #{@subscriber.number}"
         @alarms = Alarm.where(subscriber_id: @subscriber_id, status: true).order("created_at DESC")
         @alarms_history = Alarm.where(subscriber_id: @subscriber_id, status: false).limit(10).order("created_at DESC")
+        @alarms_history_count = Alarm.where(subscriber_id: @subscriber_id, status: false).count
       else
         message_sub = "Абонент #{params[:number]} не прописан в БД. Вы можете его сейчас прописать."
         redirect_to action: :new, message_sub: message_sub unless subscriber

@@ -24,8 +24,29 @@ class AlarmsController < ApplicationController
   end
 
   def show
-    @alarm = Alarm.find(params[:id])
-    @search_number = params[:search_number]
+    respond_to do |format|
+      format.html do
+         if params[:cleared_data] == 'true' 
+	    @alarm_str = Alarm.find(params[:id]).cleared_data.to_s
+	    else
+	      @alarm_str = Alarm.find(params[:id]).data.to_s
+	    end
+	    
+	    @search_number = params[:search_number]  
+
+      end
+      format.xml  { render :nothing => true}
+      format.json do
+
+
+
+    end
+
+    end
+
+
+
+      
   end
 
 

@@ -3,7 +3,9 @@ SipMonitor::Application.routes.draw do
   resources :subscribers do
     collection do
       get 'search'
+      get 'online_test'
     end
+    get 'online_test', :on => :member
   end
   resources :alarms do
     collection do

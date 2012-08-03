@@ -1,4 +1,4 @@
-Максимально 10 последних записей
+Максимально 10 последних записей. Всего в истории <%= @alarms_history_count %> записей.
 <div class="alarms_history_subscriber" id="alarms_history_subscriber"> 
 <table>
   <tr>
@@ -17,7 +17,7 @@
       <td><%= full_number_str %></td>      
       <td><%= alarm.alarm_raised_time.utc.strftime("%H:%M:%S %d-%m-%Y") %></td>
       <td><%= alarm.cleared_time ? alarm.cleared_time.utc.strftime("%H:%M:%S %d-%m-%Y") : 'не определено' %></td>
-      <td><%= link_to 'Просмотреть', :controller => :alarms, :action => :show, :id => alarm.id, search_number: full_number_str %></td>
+      <td><%= link_to 'Авария', :controller => :alarms, :action => :show, :id => alarm.id, search_number: full_number_str, cleared_data: false %>&nbsp;&nbsp;<%= (link_to 'Восстановление', :controller => :alarms, :action => :show, :id => alarm.id, search_number: full_number_str, cleared_data: true) if alarm.cleared_data %></td>
 
     </tr>
     <% i += 1 %>

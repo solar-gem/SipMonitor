@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120726072736) do
+ActiveRecord::Schema.define(:version => 20120802074037) do
 
   create_table "alarms", :force => true do |t|
     t.string   "serial_number",     :limit => 10,                   :null => false
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20120726072736) do
     t.boolean  "status",                          :default => true
     t.datetime "created_at",                                        :null => false
     t.datetime "updated_at",                                        :null => false
+    t.text     "cleared_data"
   end
 
   add_index "alarms", ["subscriber_id"], :name => "index_alarms_on_subscriber_id"
