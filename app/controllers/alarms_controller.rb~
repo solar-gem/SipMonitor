@@ -36,7 +36,12 @@ class AlarmsController < ApplicationController
 
       end
       format.xml  { render :nothing => true}
-      format.json { @alarm_str = '777'}
+      format.json do
+
+
+
+    end
+
     end
 
 

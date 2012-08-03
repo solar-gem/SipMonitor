@@ -30,24 +30,6 @@ http://prootime.ru/5graph-jquery-pugin
 	
 
 
-<% def alarm_count(t1, t2) %>
-  <% Alarm.where(:alarm_raised_time => (Time.utc(Time.now.year, Time.now.month, Time.now.day, t1))..Time.utc(Time.now.year, Time.now.month, Time.now.day, t2)).count %>
-<% end %>
-
-<% def alarm_cleared_count(t1, t2) %>
-  <% Alarm.where(:cleared_time => (Time.utc(Time.now.year, Time.now.month, Time.now.day, t1))..Time.utc(Time.now.year, Time.now.month, Time.now.day, t2)).count %>
-<% end %>
-
-<% def alarm_all_count(t) %>
-  <% qq = Alarm.where(:alarm_raised_time => (Time.utc(Time.now.year, Time.now.month, Time.now.day, 0))..Time.utc(Time.now.year, Time.now.month, Time.now.day, t)).count%>
- <% aa = Alarm.where(:cleared_time => (Time.utc(Time.now.year, Time.now.month, Time.now.day, 0))..Time.utc(Time.now.year, Time.now.month, Time.now.day, t)).count %>
-<% qq - aa %>
-<% end %>
-
-
-
-
-
 
 
 
@@ -98,31 +80,14 @@ var hints = {
 
 //массив для построения графика
 var data = {'graph': [
-        {'point': [ // Прирост аварий за час
-        {"val": <%= alarm_count(0, 1) %>, "gval":"00:00", "desc": "Аварии"},
-        {"val": <%= alarm_count(1, 2) %>, "gval":"01:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(2, 3) %>, "gval":"02:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(3, 4) %>, "gval":"03:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(4, 5) %>, "gval":"04:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(5, 6) %>, "gval":"05:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(6, 7) %>, "gval":"06:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(7, 8) %>, "gval":"07:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(8, 9) %>, "gval":"08:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(9, 10) %>, "gval":"09:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(10, 11) %>, "gval":"10:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(11, 12) %>, "gval":"11:00", "desc": "Прирост аварий в течении часа"},
-	{"val": <%= alarm_count(12, 13) %>, "gval":"12:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(13, 14) %>, "gval":"13:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(14, 15) %>, "gval":"14:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(15, 16) %>, "gval":"15:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(16, 17) %>, "gval":"16:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(17, 18) %>, "gval":"17:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(18, 19) %>, "gval":"18:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(19, 20) %>, "gval":"19:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(20, 21) %>, "gval":"20:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(21, 22) %>, "gval":"21:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(22, 23) %>, "gval":"22:00", "desc": "Прирост аварий в течении часа"},
-        {"val": <%= alarm_count(23, 24) %>, "gval":"23:00", "desc": "Прирост аварий в течении часа"}  
+        {'point': [ // Прирост аварий за час     \"Прирост аварий в течении часа\"
+        <% i = 1 %>
+        <% @graph[:alarm_count].each do |count_str| %>
+           <% str = "{\"val\": #{count_str}, \"gval\":\"#{i.to_s}:00\", \"desc\": \"Прирост аварий в течении часа\"}" %>
+             <% str << "," if i < @graph[:alarm_count].length  %>
+             <% i += 1 %>
+             <%== str %>
+        <% end %>        
         ],
         'properties':{
         'linecolor':'#ff7f50', //цвет линий соединящих точки графика
@@ -134,31 +99,14 @@ var data = {'graph': [
         'activepointwidth':2 //радиус активной точки
         }
         },
-        {'point': [ // Общее кол-во аварий
-       {"val": <%= alarm_all_count(1) %>, "gval":"00:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(2) %>, "gval":"01:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(3) %>, "gval":"02:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(4) %>, "gval":"03:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(5) %>, "gval":"04:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(6) %>, "gval":"05:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(7) %>, "gval":"06:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(8) %>, "gval":"07:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(9) %>, "gval":"08:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(10) %>, "gval":"09:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(11) %>, "gval":"10:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(12) %>, "gval":"11:00", "desc": "Кол-во аварий"},
-	{"val": <%= alarm_all_count(13) %>, "gval":"12:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(14) %>, "gval":"13:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(15) %>, "gval":"14:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(16) %>, "gval":"15:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(17) %>, "gval":"16:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(18) %>, "gval":"17:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(19) %>, "gval":"18:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(20) %>, "gval":"19:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(21) %>, "gval":"20:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(22) %>, "gval":"21:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(23) %>, "gval":"22:00", "desc": "Кол-во аварий"},
-        {"val": <%= alarm_all_count(24) %>, "gval":"23:00", "desc": "Кол-во аварий"}  
+        {'point': [ // Общее кол-во аварий \"Кол-во аварий\"
+        <% i = 1 %>
+        <% @graph[:alarm_all_count].each do |count_str| %>
+           <% str = "{\"val\": #{count_str}, \"gval\":\"#{i.to_s}:00\", \"desc\": \"Кол-во аварий\"}" %>
+             <% str << "," if i < @graph[:alarm_count].length  %>
+             <% i += 1 %>
+             <%== str %>
+        <% end %>        
         ],
         'properties':{
         'linecolor':'#ff0000', //цвет линий соединящих точки графика
@@ -169,32 +117,15 @@ var data = {'graph': [
         'spacealpha':0.1, //степень прозрачности области под графиком
         'activepointwidth':4 //радиус активной точки
         }
-        }, // Число восстановлений за час
+        }, // Число восстановлений за час           \"Восстановлений в течении часа\"
         {'point': [
-        {"val": <%= alarm_cleared_count(0, 1) %>, "gval":"00:00", "desc": "Восстановление"},
-        {"val": <%= alarm_cleared_count(1, 2) %>, "gval":"01:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(2, 3) %>, "gval":"02:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(3, 4) %>, "gval":"03:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(4, 5) %>, "gval":"04:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(5, 6) %>, "gval":"05:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(6, 7) %>, "gval":"06:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(7, 8) %>, "gval":"07:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(8, 9) %>, "gval":"08:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(9, 10) %>, "gval":"09:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(10, 11) %>, "gval":"10:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(11, 12) %>, "gval":"11:00", "desc": "Восстановлений в течении часа"},
-	{"val": <%= alarm_cleared_count(12, 13) %>, "gval":"12:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(13, 14) %>, "gval":"13:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(14, 15) %>, "gval":"14:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(15, 16) %>, "gval":"15:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(16, 17) %>, "gval":"16:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(17, 18) %>, "gval":"17:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(18, 19) %>, "gval":"18:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(19, 20) %>, "gval":"19:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(20, 21) %>, "gval":"20:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(21, 22) %>, "gval":"21:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(22, 23) %>, "gval":"22:00", "desc": "Восстановлений в течении часа"},
-        {"val": <%= alarm_cleared_count(23, 24) %>, "gval":"23:00", "desc": "Восстановлений в течении часа"}  
+       <% i = 1 %>
+        <% @graph[:alarm_cleared_count].each do |count_str| %>
+           <% str = "{\"val\": #{count_str}, \"gval\":\"#{i.to_s}:00\", \"desc\": \"Восстановлений в течении часа\"}" %>
+             <% str << "," if i < @graph[:alarm_count].length  %>
+             <% i += 1 %>
+             <%== str %>
+        <% end %>        
         ],
         'properties':{
         'linecolor':'#008000', //цвет линий соединящих точки графика
