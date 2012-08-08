@@ -40,20 +40,6 @@
           });
         <% end %>
 
-<script type="text/javascript">
-$(function () {
-    var d1 = [];
-    for (var i = 0; i < 14; i += 0.5)
-        d1.push([i, Math.sin(i)]);
-
-    var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-
-    // a null signifies separate line segments
-    var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-    
-    $.plot($("#placeholder"), [ d1, d2, d3 ]);
-});
-</script>
 
 
 
@@ -127,6 +113,17 @@ $(function () {
               <li><a href="/alarms/statistics"><span>Статистика</span></a></li>
               
               <!-- <li><%= link_to users_path do %><span>Пользователи</span><% end %></li>-->
+
+<span class="high">
+<strong>Активность сканера: </strong>
+    <% if Scaner.last %>
+       <%= ((Time.now.utc+ 14400) - Scaner.select(:last_time).last.last_time.utc).round %>
+     cек. назад
+    <% else %>
+       <%= %>
+       ещё не был запущен
+    <% end %>
+  </span>
 
               	
 <!-- Управление аудио проигрывателем              

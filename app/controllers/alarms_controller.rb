@@ -5,7 +5,7 @@ class AlarmsController < ApplicationController
 
   def index
     @alarms = Alarm.where(status: true).order("created_at DESC")
-
+    @alarms_history = Alarm.where(status: false).limit(10).order("created_at DESC")
     $QQ ||= @alarms.length
     puts '/' * 50
     (@alarms.length - $QQ) > 0 ? @ring = true : @ring = false

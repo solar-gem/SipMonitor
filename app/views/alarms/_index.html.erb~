@@ -1,6 +1,4 @@
-<div class="follow_form" id="follow_form">
-
-   
+<div class="follow_form" id="follow_form">  
 
 
   <p class="t-right">
@@ -18,7 +16,7 @@
 
  
   </span>
-  <h3 class="tit">Аварийная панель</h3> 
+ 
   <table>
     <tr>
       <th>Номер абонента</th>
@@ -34,7 +32,7 @@
         <td><%= link_to full_number_str, :controller => "subscribers", :action => "search", :number => full_number_str %></td>
         <td><%= alarm.alarm_raised_time.utc.strftime("%H:%M:%S %d-%m-%Y") %></td>
         <td><%= link_to 'Просмотреть', :action => :show, :id => alarm.id %>&nbsp;&nbsp;
-            <%= link_to 'Запросить со станции', :action=>"online_test", :controller=>"subscribers", :id => subscriber_id %></td>
+            <%= link_to 'Запросить со станции', :action=>"online_test", :controller=>"subscribers", :id => alarm.subscriber_id %></td>
 
       </tr>
       <% i += 1 %>

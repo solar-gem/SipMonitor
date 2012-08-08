@@ -21,6 +21,7 @@ class AlarmsController < ApplicationController
     @sub_all = Subscriber.all.count
     @sub_all_control = Subscriber.where(:control => true).count
     @sub_alarm = Alarm.where(status: true).count
+    @graph = Alarm.statistics
   end
 
   def show

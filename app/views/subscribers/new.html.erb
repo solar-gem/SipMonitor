@@ -3,10 +3,10 @@
     <%= form_for @subscriber do |f| %>
     <table class="nostyle">
       <% if @subscriber.errors.any? %>
-        <div class="error_messages">      
+        <div class="error_messages">
           <ul>
             <% for message in @subscriber.errors.full_messages %>
-              <p class="msg error"><%= message %></p>          
+              <p class="msg error"><%= message %></p>
             <% end %>
           </ul>
         </div>
@@ -15,7 +15,7 @@
       <tr>
         <!-- <td style="width:70px;">Номер абонента</td> -->
         <td style="width:70px;" nowrap><%= f.label :number, style: "width:70px;" %></td>
-        <td><%= f.telephone_field(:area, {:placeholder=>"код города", :maxlength=>"5", :size=>"10", :class=>"input-text"}) %>&nbsp;&nbsp;&nbsp;&nbsp;<%= f.telephone_field(:number, {:placeholder=>"номер абонента", :maxlength=>"7", :size=>"25", :class=>"input-text"}) %></td>
+        <td><%= f.telephone_field(:area, {:placeholder=>"код города", :maxlength=>"5", :size=>"10", :class=>"input-text"}) %>&nbsp;&nbsp;&nbsp;&nbsp;<%= f.telephone_field(:number, {:placeholder=>"номер абонента", :maxlength=>"7", :size=>"25", :class=>"input-text"}) %><%= image_tag "297.gif", id: 'loadImg', style: "visibility: hidden" %></td>
       </tr>
       <tr>
         <td style="width:70px;"><%= f.label :eid, style: "width:70px;" %></td>
@@ -33,12 +33,27 @@
       <td></td>
       <td><label><%= f.check_box :control %>Поставить под контроль?</label> &nbsp;</td>
        <tr>
-         <td colspan="2" class="t-right"><%= f.submit "Создать", class: "input-submit"%></td>
+         <td colspan="2" class="t-right"><%= f.submit "Создать", class: "input-submit", onclick: "showLayer()" %></td>
        </tr>
 
 
-    </table>
-      <% end %>
-    
-  </fieldset>
-  
+     </table>
+   <% end %>
+
+ </fieldset>
+
+
+ <script>
+   function hiddenLayer() {
+     document.getElementById("loadImg").style.visibility = "hidden";
+   }
+function showLayer() {
+  document.getElementById("loadImg").style.visibility = "visible";
+}
+</script>
+
+
+
+
+
+<%  %>

@@ -46,40 +46,41 @@ def preparation_ats
 
       begin
         @ats.connect
+        puts 'Успешное подключение к станции'
       rescue
-        errors.add(:connect, "Не удалось подключиться к станции для запроса Equipment ID!") 
+        errors.add(:connect, "Не удалось подключиться к станции для запроса Equipment ID!")
         return nil
       end
 
       begin
         @ats.login
       rescue
-        errors.add(:login, "Не удалось авторизироваться на станции для запроса Equipment ID!") 
+        errors.add(:login, "Не удалось авторизироваться на станции для запроса Equipment ID!")
         return nil
       end
 end
 
 def test_subsrciber
-  cmd_str = "DSP EPST: IEF=DOMAIN1, QUERYBY=METHOD1, TRMTYPE=TRM0, EID=\"#{eid}\";" 
+  cmd_str = "DSP EPST: IEF=DOMAIN1, QUERYBY=METHOD1, TRMTYPE=TRM0, EID=\"#{eid}\";"
   @ats.cmd(cmd_str)
-  if @ats.answer[:successful] 
+  if @ats.answer[:successful]
     if @ats.answer[:data].include?("UnRegistered")
        result = {result: 'не зарегистрирован', data: @ats.answer[:data]}
      else
        result = {result: 'зарегистрирован', data: @ats.answer[:data]}
-     end    
+     end
   else
     result = {result: '???', data: @ats.answer[:data]}
-    errors.add(:cmd, "Не удалось получить данные при запросе состояния регистрации абонета #{number}")    
+    errors.add(:cmd, "Не удалось получить данные при запросе состояния регистрации абонета #{number}")
   end
   @ats.close
   result
 end
 
-  # Запрашиваем или проверяем Equipment ID со станции 
+  # Запрашиваем или проверяем Equipment ID со станции
   def operation_EID_from_station
 
-    
+
 
      eid == '' ? request_EID_from_station : verification_EID_from_station
 
@@ -94,45 +95,45 @@ def request_EID_from_station
         @ats.cmd("LST USER: SDN=K'#{number}, EDN=K'#{number}, PT=ALL,CONFIRM=Y;")
         ldnset = @ats.answer[:data][/\d+(?= +#{number} +#{number})/]
       rescue
-        self.errors.add(:cmd, "Не удалось получить данные при запросе Local DnSet!")        
+        self.errors.add(:cmd, "Не удалось получить данные при запросе Local DnSet!")
         return nil
       end
       # Запрашиваем со станции Equipment ID
       begin
         @ats.cmd("LST SBR: D=K'#{number}, LP=#{ldnset};")
       rescue
-        self.errors.add(:cmd, "Не удалось получить данные при запросе Equipment ID!")         
+        self.errors.add(:cmd, "Не удалось получить данные при запросе Equipment ID!")
         return nil
       end
 
       if @ats.answer[:successful]
         # Проверка является ли абонент SIP
         unless @ats.answer[:data][/Port type  =  SIP subscriber/]
-          self.errors.add(:cmd, "Номер #{number} не является SIP.")          
-          
+          self.errors.add(:cmd, "Номер #{number} не является SIP.")
+
           return nil
         end
 
         # !!! Нужно добавить более полную проверку ошибок.
         # !!! Нужно искать не только EID абонента, но и LP по коду города. Есть проблема с несколькими LP в городе и они завязаны на не правильный Area код (код города)
-        self.eid = @ats.answer[:data][/(?<=Equipment ID  =  )\d+/]        
-        
+        self.eid = @ats.answer[:data][/(?<=Equipment ID  =  )\d+/]
+
       else
-        self.errors.add(:cmd, "Номер #{number} не прописан.")        
+        self.errors.add(:cmd, "Номер #{number} не прописан.")
         return nil
       end
 end
 # Проверяем Equipment ID
 def verification_EID_from_station
-  @ats.cmd("LST MSBR: EID=\"#{eid}\";")  
+  @ats.cmd("LST MSBR: EID=\"#{eid}\";")
   if @ats.answer[:successful] && @ats.answer[:data].include?("Subscriber number  =  #{number}")
-    
+
   else
-    errors.add(:cmd, "Номер #{number} и Equipment ID #{eid} не соответствуют друг другу.") 
-    self.eid = nil 
+    errors.add(:cmd, "Номер #{number} и Equipment ID #{eid} не соответствуют друг другу.")
+    self.eid = nil
   end
- 
-  
+
+
 end
 
 end

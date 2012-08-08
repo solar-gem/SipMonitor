@@ -39,3 +39,4 @@ gem 'jquery-rails'
 # gem 'debugger'
 
 gem "rails_best_practices"
+gem 'russian' # Русификация

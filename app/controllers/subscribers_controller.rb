@@ -19,7 +19,7 @@ class SubscribersController < ApplicationController
     # Проверяем валидность Equipment ID только после его нахождения (запроса на станции)
     @subscriber.preparation_ats # Подготовка. Подключение к станции
     @subscriber.operation_EID_from_station #if @subscriber.valid?
-  
+
     if @subscriber.eid && @subscriber.eid != ''
       begin
         if @subscriber.save
@@ -57,17 +57,17 @@ class SubscribersController < ApplicationController
 
   end
 
-# Запрос состояния абонента на станции
-def online_test
-   @subscriber = Subscriber.find params[:id]
-   @subscriber.preparation_ats # Подготовка. Подключение к станции
-   
-   online_test = @subscriber.test_subsrciber
-   
-   @online_test_str = online_test[:data]
-   @online_test_result = online_test[:result]
-   @search_number = params[:search_number]  
-end
+  # Запрос состояния абонента на станции
+  def online_test
+    @subscriber = Subscriber.find params[:id]
+    @subscriber.preparation_ats # Подготовка. Подключение к станции
+
+    online_test = @subscriber.test_subsrciber
+
+    @online_test_str = online_test[:data]
+    @online_test_result = online_test[:result]
+    @search_number = params[:search_number]
+  end
 
   # Поиск аварий по номеру абонета
   def search
@@ -77,7 +77,7 @@ end
       @subscriber = Subscriber.where(full_number: params[:number]).last
       if @subscriber
 
- 
+
 
         @subscriber_id = @subscriber.id
         @subscriber_str = "(#{@subscriber.area})   #{@subscriber.number}"

@@ -266,6 +266,7 @@ ru:
         cmd: Ответ станции. 
         connect: Подключение к станции.
         login: Авторизация на станции. 
+        db: База данных.
     errors:
       models:
         subscriber:
